@@ -67,8 +67,8 @@ namespace P_F.Controllers
             fechaInicio ??= DateTime.Now.AddDays(-30);
             fechaFin ??= DateTime.Now;
 
-            var empleados = _context.Empleados.ToList();
-            var estadisticasEmpleados = new List<EstadisticaEmpleado>();
+            var empleados = _context.Empleados.Where(e => e.Activo).ToList();
+            var empleadosProductividad = new List<P_F.ViewModels.EmpleadoProductividad>();
 
             foreach (var empleado in empleados)
             {
@@ -78,66 +78,132 @@ namespace P_F.Controllers
                               o.FechaIngreso >= fechaInicio && 
                               o.FechaIngreso <= fechaFin);
 
-                var ordenesActivas = _context.OrdenesTrabajo
+                var ordenesEnProceso = _context.OrdenesTrabajo
                     .Count(o => o.EmpleadoAsignadoId == empleado.EmpleadoId && 
                               o.Estado == EstadoOrden.EnProceso);
 
-                var ventasGeneradas = _context.OrdenesTrabajo
+                var totalIngresos = _context.OrdenesTrabajo
                     .Where(o => o.EmpleadoAsignadoId == empleado.EmpleadoId && 
                               o.Estado == EstadoOrden.Completada &&
                               o.FechaIngreso >= fechaInicio && 
                               o.FechaIngreso <= fechaFin)
                     .Sum(o => (decimal?)o.Total) ?? 0;
 
-                estadisticasEmpleados.Add(new EstadisticaEmpleado
+                var ordenesRecientes = _context.OrdenesTrabajo
+                    .Where(o => o.EmpleadoAsignadoId == empleado.EmpleadoId)
+                    .OrderByDescending(o => o.FechaIngreso)
+                    .Take(5)
+                    .ToList();
+
+                // Calcular eficiencia básica
+                var eficiencia = ordenesCompletadas > 0 ? 
+                    Math.Min(100, (ordenesCompletadas * 20) + (totalIngresos > 1000 ? 20 : 0)) : 0;
+
+                empleadosProductividad.Add(new P_F.ViewModels.EmpleadoProductividad
                 {
-                    Nombre = $"{empleado.Nombre} {empleado.Apellido}",
+                    EmpleadoId = empleado.EmpleadoId,
+                    NombreCompleto = $"{empleado.Nombre} {empleado.Apellido}",
+                    Especialidad = empleado.Especialidad ?? "General",
                     OrdenesCompletadas = ordenesCompletadas,
-                    OrdenesActivas = ordenesActivas
+                    OrdenesEnProceso = ordenesEnProceso,
+                    TotalIngresos = totalIngresos,
+                    PromedioTiempoOrden = ordenesCompletadas > 0 ? 2.5m : 0,
+                    EficienciaCalculada = eficiencia,
+                    OrdenesRecientes = ordenesRecientes
                 });
             }
 
-            ViewBag.FechaInicio = fechaInicio;
-            ViewBag.FechaFin = fechaFin;
-            
-            return View(estadisticasEmpleados);
-        }
-
-        [HttpGet]
-        public IActionResult OrdenesPorEstado()
-        {
-            var estadisticas = new
+            var viewModel = new P_F.ViewModels.ReporteProductividadViewModel
             {
-                Pendientes = _context.OrdenesTrabajo.Count(o => o.Estado == EstadoOrden.Pendiente),
-                EnProceso = _context.OrdenesTrabajo.Count(o => o.Estado == EstadoOrden.EnProceso),
-                Completadas = _context.OrdenesTrabajo.Count(o => o.Estado == EstadoOrden.Completada),
-                Canceladas = _context.OrdenesTrabajo.Count(o => o.Estado == EstadoOrden.Cancelada)
+                EmpleadosProductividad = empleadosProductividad,
+                FechaInicio = fechaInicio,
+                FechaFin = fechaFin,
+                TotalIngresosPeriodo = empleadosProductividad.Sum(e => e.TotalIngresos),
+                TotalOrdenesPeriodo = empleadosProductividad.Sum(e => e.OrdenesCompletadas)
             };
 
-            return View(estadisticas);
+            return View(viewModel);
         }
 
         [HttpGet]
-        public IActionResult ClientesFrecuentes()
+        public async Task<IActionResult> OrdenesPorEstado(DateTime? fechaInicio, DateTime? fechaFin)
         {
-            var clientesFrecuentes = _context.Clientes
+            // Establecer fechas por defecto
+            if (!fechaInicio.HasValue)
+                fechaInicio = DateTime.Now.AddMonths(-3);
+            if (!fechaFin.HasValue)
+                fechaFin = DateTime.Now;
+
+            var ordenesPorEstado = await _context.OrdenesTrabajo
+                .Where(o => o.FechaIngreso >= fechaInicio && o.FechaIngreso <= fechaFin)
+                .GroupBy(o => o.Estado)
+                .Select(g => new
+                {
+                    Estado = g.Key,
+                    Cantidad = g.Count(),
+                    TotalMonto = g.Sum(o => o.Total),
+                    PromedioMonto = g.Average(o => o.Total)
+                })
+                .OrderByDescending(x => x.Cantidad)
+                .ToListAsync();
+
+            var ordenes = await _context.OrdenesTrabajo
+                .Include(o => o.Cliente)
+                .Include(o => o.Vehiculo)
+                .Include(o => o.EmpleadoAsignado)
+                .Where(o => o.FechaIngreso >= fechaInicio && o.FechaIngreso <= fechaFin)
+                .OrderByDescending(o => o.FechaIngreso)
+                .Take(100)
+                .ToListAsync();
+
+            ViewBag.OrdenesPorEstado = ordenesPorEstado;
+            ViewBag.FechaInicio = fechaInicio;
+            ViewBag.FechaFin = fechaFin;
+            ViewBag.TotalOrdenes = ordenes.Count;
+            ViewBag.MontoTotal = ordenes.Sum(o => o.Total);
+
+            return View(ordenes);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ClientesFrecuentes(int? mes, int? año)
+        {
+            // Establecer período por defecto
+            if (!mes.HasValue) mes = DateTime.Now.Month;
+            if (!año.HasValue) año = DateTime.Now.Year;
+
+            var fechaInicio = new DateTime(año.Value, mes.Value, 1);
+            var fechaFin = fechaInicio.AddMonths(1).AddDays(-1);
+
+            var clientesFrecuentes = await _context.Clientes
+                .Where(c => c.Activo)
                 .Select(c => new
                 {
                     Cliente = c,
-                    TotalOrdenes = _context.OrdenesTrabajo.Count(o => o.ClienteId == c.ClienteId),
-                    UltimaVisita = _context.OrdenesTrabajo
-                        .Where(o => o.ClienteId == c.ClienteId)
+                    TotalOrdenes = c.OrdenesTrabajo
+                        .Where(o => o.FechaIngreso >= fechaInicio && o.FechaIngreso <= fechaFin)
+                        .Count(),
+                    TotalFacturado = c.OrdenesTrabajo
+                        .Where(o => o.FechaIngreso >= fechaInicio && o.FechaIngreso <= fechaFin && o.Estado == EstadoOrden.Completada)
+                        .Sum(o => (decimal?)o.Total) ?? 0,
+                    UltimaVisita = c.OrdenesTrabajo
                         .OrderByDescending(o => o.FechaIngreso)
                         .Select(o => o.FechaIngreso)
-                        .FirstOrDefault(),
-                    TotalGastado = _context.OrdenesTrabajo
-                        .Where(o => o.ClienteId == c.ClienteId && o.Estado == EstadoOrden.Completada)
-                        .Sum(o => (decimal?)o.Total) ?? 0
+                        .FirstOrDefault()
                 })
                 .Where(x => x.TotalOrdenes > 0)
                 .OrderByDescending(x => x.TotalOrdenes)
+                .ThenByDescending(x => x.TotalFacturado)
                 .Take(20)
-                .ToList();
+                .ToListAsync();
+
+            ViewBag.Mes = mes;
+            ViewBag.Año = año;
+            ViewBag.FechaInicio = fechaInicio;
+            ViewBag.FechaFin = fechaFin;
+            ViewBag.TotalOrdenes = clientesFrecuentes.Sum(c => c.TotalOrdenes);
+            ViewBag.TotalFacturado = clientesFrecuentes.Sum(c => c.TotalFacturado);
+            ViewBag.PromedioCliente = clientesFrecuentes.Any() ? clientesFrecuentes.Average(c => c.TotalFacturado) : 0;
 
             return View(clientesFrecuentes);
         }

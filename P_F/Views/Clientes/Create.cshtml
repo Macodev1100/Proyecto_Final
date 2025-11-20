@@ -1,8 +1,8 @@
 @model P_F.Models.Entities.Cliente
 
 @{
-    ViewData["Title"] = Model.ClienteId == 0 ? "Nuevo Cliente" : "Editar Cliente";
-    var isEdit = Model.ClienteId != 0;
+    ViewData["Title"] = (Model?.ClienteId ?? 0) == 0 ? "Nuevo Cliente" : "Editar Cliente";
+    var isEdit = (Model?.ClienteId ?? 0) != 0;
 }
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -139,7 +139,7 @@
             </div>
         </div>
 
-        @if (isEdit && Model.Vehiculos.Any())
+        @if (isEdit && Model?.Vehiculos?.Any() == true)
         {
             <!-- Vehículos del cliente -->
             <div class="card shadow mb-4">
@@ -149,7 +149,7 @@
                     </h6>
                 </div>
                 <div class="card-body">
-                    @foreach (var vehiculo in Model.Vehiculos.Take(5))
+                    @foreach (var vehiculo in Model?.Vehiculos?.Take(5) ?? Enumerable.Empty<P_F.Models.Entities.Vehiculo>())
                     {
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <div>
@@ -164,15 +164,15 @@
                         <hr>
                     }
                     
-                    @if (Model.Vehiculos.Count() > 5)
+                    @if ((Model?.Vehiculos?.Count() ?? 0) > 5)
                     {
                         <p class="text-muted text-center">
-                            Y @(Model.Vehiculos.Count() - 5) vehículo(s) más...
+                            Y @((Model?.Vehiculos?.Count() ?? 0) - 5) vehículo(s) más...
                         </p>
                     }
                     
                     <div class="text-center">
-                        <a asp-controller="Vehiculos" asp-action="Create" asp-route-clienteId="@Model.ClienteId" 
+                        <a asp-controller="Vehiculos" asp-action="Create" asp-route-clienteId="@(Model?.ClienteId ?? 0)" 
                            class="btn btn-success btn-sm">
                             <i class="fas fa-plus me-1"></i>Agregar Vehículo
                         </a>

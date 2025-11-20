@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using P_F.Data;
 using P_F.Models.Entities;
 using P_F.Services;
+using P_F.ViewModels;
 
 namespace P_F.Controllers
 {
@@ -27,7 +28,7 @@ namespace P_F.Controllers
 
             var facturasQuery = _context.Facturas
                 .Include(f => f.Cliente)
-                .Include(f => f.OrdenTrabajo)
+                .Include(f => f.OrdenTrabajo!)
                     .ThenInclude(o => o.Vehiculo)
                 .Include(f => f.Pagos)
                 .AsQueryable();
@@ -38,7 +39,7 @@ namespace P_F.Controllers
                     f.NumeroFactura.Contains(searchString) ||
                     f.Cliente.Nombre.Contains(searchString) ||
                     f.Cliente.Apellido.Contains(searchString) ||
-                    f.OrdenTrabajo.NumeroOrden.Contains(searchString));
+                    (f.OrdenTrabajo != null && f.OrdenTrabajo.NumeroOrden.Contains(searchString)));
             }
 
             if (estado.HasValue)
@@ -70,9 +71,9 @@ namespace P_F.Controllers
 
             var factura = await _context.Facturas
                 .Include(f => f.Cliente)
-                .Include(f => f.OrdenTrabajo)
+                .Include(f => f.OrdenTrabajo!)
                     .ThenInclude(o => o.Vehiculo)
-                .Include(f => f.OrdenTrabajo)
+                .Include(f => f.OrdenTrabajo!)
                     .ThenInclude(o => o.EmpleadoAsignado)
                 .Include(f => f.Pagos)
                     .ThenInclude(p => p.Empleado)
@@ -221,9 +222,9 @@ namespace P_F.Controllers
 
             var factura = await _context.Facturas
                 .Include(f => f.Cliente)
-                .Include(f => f.OrdenTrabajo)
+                .Include(f => f.OrdenTrabajo!)
                     .ThenInclude(o => o.Vehiculo)
-                .Include(f => f.OrdenTrabajo)
+                .Include(f => f.OrdenTrabajo!)
                     .ThenInclude(o => o.EmpleadoAsignado)
                 .Include(f => f.Pagos)
                 .FirstOrDefaultAsync(f => f.FacturaId == id);
@@ -239,9 +240,9 @@ namespace P_F.Controllers
             if (!fechaInicio.HasValue) fechaInicio = DateTime.Now.AddMonths(-1);
             if (!fechaFin.HasValue) fechaFin = DateTime.Now;
 
-            ViewData["FechaInicio"] = fechaInicio;
-            ViewData["FechaFin"] = fechaFin;
-            ViewData["Estado"] = estado;
+            ViewBag.FechaInicio = fechaInicio;
+            ViewBag.FechaFin = fechaFin;
+            ViewBag.Estado = estado;
 
             var facturasQuery = _context.Facturas
                 .Include(f => f.Cliente)
@@ -256,17 +257,19 @@ namespace P_F.Controllers
                 .OrderBy(f => f.FechaEmision)
                 .ToListAsync();
 
-            var resumen = new
+            var viewModel = new ReporteFacturasViewModel
             {
-                TotalFacturas = facturas.Count,
+                Facturas = facturas,
                 TotalFacturado = facturas.Sum(f => f.Total),
-                TotalPagadas = facturas.Count(f => f.Estado == EstadoFactura.Pagada),
-                TotalEmitidas = facturas.Count(f => f.Estado == EstadoFactura.Emitida),
-                TotalBorrador = facturas.Count(f => f.Estado == EstadoFactura.Borrador)
+                TotalFacturasPagadas = facturas.Count(f => f.Estado == EstadoFactura.Pagada),
+                TotalFacturasPendientes = facturas.Count(f => f.Estado == EstadoFactura.Emitida),
+                TotalFacturasVencidas = facturas.Count(f => f.Estado == EstadoFactura.Emitida && f.FechaVencimiento < DateTime.Now),
+                FechaInicio = fechaInicio,
+                FechaFin = fechaFin,
+                EstadoFiltro = estado?.ToString()
             };
 
-            ViewBag.Resumen = resumen;
-            return View(facturas);
+            return View(viewModel);
         }
 
         private async Task<string> GenerarNumeroFactura()

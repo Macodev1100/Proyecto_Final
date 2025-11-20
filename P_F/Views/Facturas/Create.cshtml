@@ -1,0 +1,386 @@
+@model P_F.Models.Entities.Factura
+
+@{
+    ViewData["Title"] = "Nueva Factura";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-file-plus me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="mb-0 text-muted">Crear nueva factura para cliente</p>
+                </div>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Volver
+                </a>
+            </div>
+
+            <form asp-action="Create" id="formFactura">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                
+                <div class="row">
+                    <!-- Información de la factura -->
+                    <div class="col-md-8">
+                        <div class="card shadow mb-4">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-info-circle me-2"></i>Información de la Factura
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="NumeroFactura" class="form-label">Número de Factura</label>
+                                            <input asp-for="NumeroFactura" class="form-control" readonly />
+                                            <span asp-validation-for="NumeroFactura" class="text-danger"></span>
+                                            <small class="form-text text-muted">Se genera automáticamente</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="FechaEmision" class="form-label">Fecha de Emisión</label>
+                                            <input asp-for="FechaEmision" class="form-control" type="date" />
+                                            <span asp-validation-for="FechaEmision" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="FechaVencimiento" class="form-label">Fecha de Vencimiento (Opcional)</label>
+                                            <input asp-for="FechaVencimiento" class="form-control" type="date" />
+                                            <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="Estado" class="form-label">Estado</label>
+                                            <select asp-for="Estado" class="form-control" asp-items="Html.GetEnumSelectList<P_F.Models.Entities.EstadoFactura>()">
+                                            </select>
+                                            <span asp-validation-for="Estado" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Selección de cliente -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="ClienteId" class="form-label">Cliente</label>
+                                            <select asp-for="ClienteId" class="form-control" id="clienteSelect">
+                                                <option value="">Seleccione un cliente</option>
+                                                @if (ViewBag.Clientes != null)
+                                                {
+                                                    @foreach (var cliente in (IEnumerable<P_F.Models.Entities.Cliente>)ViewBag.Clientes)
+                                                    {
+                                                        <option value="@cliente.ClienteId">@cliente.Nombre @cliente.Apellido - @cliente.DocumentoIdentidad</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <span asp-validation-for="ClienteId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label asp-for="OrdenTrabajoId" class="form-label">Orden de Trabajo (Opcional)</label>
+                                            <select asp-for="OrdenTrabajoId" class="form-control" id="ordenTrabajoSelect">
+                                                <option value="">Sin orden de trabajo</option>
+                                            </select>
+                                            <span asp-validation-for="OrdenTrabajoId" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label asp-for="Observaciones" class="form-label">Observaciones</label>
+                                    <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                                    <span asp-validation-for="Observaciones" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalles de la factura -->
+                        <div class="card shadow">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-list me-2"></i>Detalles de la Factura
+                                </h6>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="agregarDetalle()">
+                                    <i class="fas fa-plus me-1"></i>Agregar Item
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="tablaDetalles">
+                                        <thead>
+                                            <tr>
+                                                <th>Descripción</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Unit.</th>
+                                                <th>Descuento %</th>
+                                                <th>Subtotal</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detallesFactura">
+                                            <tr id="filaVacia">
+                                                <td colspan="6" class="text-center text-muted">
+                                                    <i class="fas fa-plus-circle me-2"></i>Agregar items a la factura
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumen -->
+                    <div class="col-md-4">
+                        <div class="card shadow sticky-top">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-success">
+                                    <i class="fas fa-calculator me-2"></i>Resumen de Factura
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Subtotal:</span>
+                                    <span id="resumenSubtotal">Q 0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Descuento:</span>
+                                    <span id="resumenDescuento">Q 0.00</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>IVA (12%):</span>
+                                    <span id="resumenImpuestos">Q 0.00</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <strong>Total:</strong>
+                                    <strong id="resumenTotal">Q 0.00</strong>
+                                </div>
+
+                                <!-- Campos ocultos para los totales -->
+                                <input asp-for="SubTotal" type="hidden" id="hiddenSubTotal" />
+                                <input asp-for="Descuento" type="hidden" id="hiddenDescuento" />
+                                <input asp-for="Impuestos" type="hidden" id="hiddenImpuestos" />
+                                <input asp-for="Total" type="hidden" id="hiddenTotal" />
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-save me-2"></i>Guardar Factura
+                                    </button>
+                                    <a asp-action="Index" class="btn btn-secondary">
+                                        <i class="fas fa-times me-2"></i>Cancelar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Información del cliente -->
+                        <div class="card shadow mt-4" id="infoCliente" style="display: none;">
+                            <div class="card-header">
+                                <h6 class="m-0 font-weight-bold text-info">
+                                    <i class="fas fa-user me-2"></i>Información del Cliente
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="datosCliente"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para agregar detalle -->
+<div class="modal fade" id="modalDetalle" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Item a la Factura</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formDetalle">
+                    <div class="form-group mb-3">
+                        <label>Tipo de Item</label>
+                        <select id="tipoItem" class="form-control">
+                            <option value="servicio">Servicio</option>
+                            <option value="repuesto">Repuesto</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Descripción</label>
+                        <input type="text" id="descripcionItem" class="form-control" required />
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Cantidad</label>
+                                <input type="number" id="cantidadItem" class="form-control" min="1" value="1" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label>Precio Unitario</label>
+                                <input type="number" id="precioItem" class="form-control" step="0.01" min="0" required />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Descuento (%)</label>
+                        <input type="number" id="descuentoItem" class="form-control" min="0" max="100" value="0" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarDetalle()">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        let contadorDetalles = 0;
+
+        $(document).ready(function() {
+            // Cargar órdenes de trabajo cuando se selecciona cliente
+            $('#clienteSelect').change(function() {
+                const clienteId = $(this).val();
+                if (clienteId) {
+                    cargarOrdenesCliente(clienteId);
+                    mostrarInfoCliente(clienteId);
+                } else {
+                    $('#ordenTrabajoSelect').html('<option value="">Sin orden de trabajo</option>');
+                    $('#infoCliente').hide();
+                }
+            });
+
+            // Establecer fecha actual
+            const today = new Date().toISOString().split('T')[0];
+            $('input[name="FechaEmision"]').val(today);
+
+            calcularTotales();
+        });
+
+        function cargarOrdenesCliente(clienteId) {
+            $.get('/api/OrdenesTrabajo/PorCliente/' + clienteId)
+                .done(function(ordenes) {
+                    let options = '<option value="">Sin orden de trabajo</option>';
+                    ordenes.forEach(function(orden) {
+                        options += `<option value="${orden.ordenTrabajoId}">${orden.numeroOrden} - ${orden.descripcion}</option>`;
+                    });
+                    $('#ordenTrabajoSelect').html(options);
+                })
+                .fail(function() {
+                    console.log('Error al cargar órdenes de trabajo');
+                });
+        }
+
+        function mostrarInfoCliente(clienteId) {
+            // Buscar información del cliente en ViewBag.Clientes
+            const clientes = @Html.Raw(Json.Serialize(ViewBag.Clientes ?? new List<object>()));
+            const cliente = clientes.find(c => c.clienteId == clienteId);
+            
+            if (cliente) {
+                $('#datosCliente').html(`
+                    <p><strong>Nombre:</strong> ${cliente.nombre} ${cliente.apellido}</p>
+                    <p><strong>Documento:</strong> ${cliente.documentoIdentidad}</p>
+                    <p><strong>Teléfono:</strong> ${cliente.telefono || 'No registrado'}</p>
+                    <p><strong>Email:</strong> ${cliente.email || 'No registrado'}</p>
+                `);
+                $('#infoCliente').show();
+            }
+        }
+
+        function agregarDetalle() {
+            $('#modalDetalle').modal('show');
+            $('#formDetalle')[0].reset();
+            $('#cantidadItem').val(1);
+            $('#descuentoItem').val(0);
+        }
+
+        function confirmarDetalle() {
+            const descripcion = $('#descripcionItem').val();
+            const cantidad = parseFloat($('#cantidadItem').val());
+            const precio = parseFloat($('#precioItem').val());
+            const descuento = parseFloat($('#descuentoItem').val()) || 0;
+
+            if (!descripcion || !cantidad || !precio) {
+                alert('Por favor complete todos los campos obligatorios.');
+                return;
+            }
+
+            const subtotal = cantidad * precio * (1 - descuento / 100);
+            contadorDetalles++;
+
+            const fila = `
+                <tr id="detalle_${contadorDetalles}">
+                    <td>${descripcion}</td>
+                    <td>${cantidad}</td>
+                    <td>Q ${precio.toFixed(2)}</td>
+                    <td>${descuento}%</td>
+                    <td class="subtotal-item">Q ${subtotal.toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarDetalle(${contadorDetalles})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            $('#filaVacia').hide();
+            $('#detallesFactura').append(fila);
+            $('#modalDetalle').modal('hide');
+            calcularTotales();
+        }
+
+        function eliminarDetalle(id) {
+            $(`#detalle_${id}`).remove();
+            if ($('#detallesFactura tr:visible').length === 0) {
+                $('#filaVacia').show();
+            }
+            calcularTotales();
+        }
+
+        function calcularTotales() {
+            let subtotal = 0;
+            $('.subtotal-item').each(function() {
+                const valor = parseFloat($(this).text().replace('Q ', '').replace(',', ''));
+                subtotal += valor || 0;
+            });
+
+            const descuentoTotal = 0; // Se podría agregar descuento general
+            const baseImponible = subtotal - descuentoTotal;
+            const impuestos = baseImponible * 0.12; // IVA 12%
+            const total = baseImponible + impuestos;
+
+            // Actualizar vista
+            $('#resumenSubtotal').text('Q ' + subtotal.toFixed(2));
+            $('#resumenDescuento').text('Q ' + descuentoTotal.toFixed(2));
+            $('#resumenImpuestos').text('Q ' + impuestos.toFixed(2));
+            $('#resumenTotal').text('Q ' + total.toFixed(2));
+
+            // Actualizar campos ocultos
+            $('#hiddenSubTotal').val(subtotal.toFixed(2));
+            $('#hiddenDescuento').val(descuentoTotal.toFixed(2));
+            $('#hiddenImpuestos').val(impuestos.toFixed(2));
+            $('#hiddenTotal').val(total.toFixed(2));
+        }
+    </script>
+}

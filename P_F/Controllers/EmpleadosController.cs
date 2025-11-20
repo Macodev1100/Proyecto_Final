@@ -267,6 +267,44 @@ namespace P_F.Controllers
             return View(estadisticas);
         }
 
+        // POST: Empleados/ToggleEstado
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleEstado(int id, bool activo)
+        {
+            try
+            {
+                var empleado = await _context.Empleados.FindAsync(id);
+                if (empleado == null)
+                {
+                    TempData["Error"] = "Empleado no encontrado.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                empleado.Activo = activo;
+                
+                if (!activo)
+                {
+                    empleado.FechaTerminacion = DateTime.Now;
+                }
+                else
+                {
+                    empleado.FechaTerminacion = null;
+                }
+
+                await _context.SaveChangesAsync();
+
+                var mensaje = activo ? "activado" : "desactivado";
+                TempData["Success"] = $"Empleado {empleado.Nombre} {empleado.Apellido} {mensaje} exitosamente.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error al cambiar estado del empleado: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private bool EmpleadoExists(int id)
         {
             return _context.Empleados.Any(e => e.EmpleadoId == id);

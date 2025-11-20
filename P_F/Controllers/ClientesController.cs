@@ -38,7 +38,8 @@ namespace P_F.Controllers
         // GET: Clientes/Create
         public IActionResult Create()
         {
-            return View();
+            var cliente = new Cliente();
+            return View(cliente);
         }
 
         // POST: Clientes/Create

@@ -195,6 +195,26 @@ namespace P_F.Controllers.Api
 
             return Ok(resultado);
         }
+
+        [HttpGet("vehiculos/{clienteId}")]
+        public async Task<ActionResult<IEnumerable<object>>> GetVehiculosByCliente(int clienteId)
+        {
+            var cliente = await _clienteService.GetByIdAsync(clienteId);
+            if (cliente == null)
+                return NotFound();
+
+            var vehiculos = cliente.Vehiculos.Select(v => new
+            {
+                vehiculoId = v.VehiculoId,
+                marca = v.Marca,
+                modelo = v.Modelo,
+                placa = v.Placa,
+                anio = v.Anio,
+                nombreCompleto = $"{v.Marca} {v.Modelo} ({v.Placa}) - {v.Anio}"
+            });
+
+            return Ok(vehiculos);
+        }
     }
 
     // DTOs para la API

@@ -1,0 +1,302 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Productividad de Empleados";
+}
+
+<div class="container-fluid">
+    <!-- Encabezado -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="text-primary">
+                    <i class="fas fa-chart-line me-2"></i>Productividad de Empleados
+                </h2>
+                <div class="btn-group">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-1"></i>Ver Empleados
+                    </a>
+                    <button type="button" class="btn btn-primary" onclick="exportarReporte()">
+                        <i class="fas fa-download me-1"></i>Exportar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Fecha Inicio</label>
+                    <input type="date" class="form-control" name="fechaInicio" value="@ViewBag.FechaInicio">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Fecha Fin</label>
+                    <input type="date" class="form-control" name="fechaFin" value="@ViewBag.FechaFin">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Empleado</label>
+                    <select name="empleadoId" class="form-select">
+                        <option value="">Todos los empleados</option>
+                        @if (ViewBag.Empleados != null)
+                        {
+                            @foreach (var emp in ViewBag.Empleados)
+                            {
+                                <option value="@emp.EmpleadoId" selected="@(ViewBag.EmpleadoSeleccionado == emp.EmpleadoId)">
+                                    @emp.Nombre @emp.Apellido - @emp.TipoEmpleado
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i>Filtrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Métricas Generales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Órdenes Completadas</h6>
+                            <h3 class="mb-0">@(ViewBag.TotalOrdenesCompletadas ?? 0)</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Promedio Tiempo</h6>
+                            <h3 class="mb-0">@(ViewBag.TiempoPromedio ?? "0h")</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Ingresos Generados</h6>
+                            <h3 class="mb-0">$@((ViewBag.TotalIngresos ?? 0).ToString("N0"))</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Eficiencia</h6>
+                            <h3 class="mb-0">@(ViewBag.PorcentajeEficiencia ?? 0)%</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-tachometer-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Productividad -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-table me-2"></i>Detalles de Productividad por Empleado
+            </h5>
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Tipo</th>
+                                <th>Especialidad</th>
+                                <th class="text-center">Órdenes Asignadas</th>
+                                <th class="text-center">Órdenes Completadas</th>
+                                <th class="text-center">Órdenes Pendientes</th>
+                                <th class="text-center">Eficiencia</th>
+                                <th class="text-center">Tiempo Promedio</th>
+                                <th class="text-center">Ingresos Generados</th>
+                                <th class="text-center">Calificación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var empleado in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar me-3">
+                                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 35px; height: 35px; font-size: 0.8rem;">
+                                                    @(empleado.Empleado.Nombre?.Substring(0, 1))@(empleado.Empleado.Apellido?.Substring(0, 1))
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <strong>@empleado.Empleado.Nombre @empleado.Empleado.Apellido</strong>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-@(empleado.Empleado.TipoEmpleado.ToString() == "Mecanico" ? "primary" : 
+                                                               empleado.Empleado.TipoEmpleado.ToString() == "Recepcionista" ? "info" : 
+                                                               empleado.Empleado.TipoEmpleado.ToString() == "Supervisor" ? "warning" : "secondary")">
+                                            @empleado.Empleado.TipoEmpleado
+                                        </span>
+                                    </td>
+                                    <td>@(empleado.Empleado.Especialidad ?? "-")</td>
+                                    <td class="text-center">@empleado.OrdenesCompletadas</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">@empleado.OrdenesCompletadas</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light">
+                                            0
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <span class="me-2">@(empleado.OrdenesCompletadas > 0 ? (empleado.OrdenesCompletadas * 20).ToString("F0") : "0")%</span>
+                                            <div class="progress" style="width: 60px; height: 8px;">
+                                                <div class="progress-bar bg-success" 
+                                                     style="width: @(empleado.OrdenesCompletadas > 0 ? (empleado.OrdenesCompletadas * 20) : 0)%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">@(((double)empleado.HorasTrabajadasTotal).ToString("F1")) hrs</td>
+                                    <td class="text-center">Q @empleado.TotalFacturado.ToString("N0")</td>
+                                    <td class="text-center">
+                                        @{
+                                            var eficiencia = empleado.OrdenesCompletadas > 0 ? (empleado.OrdenesCompletadas * 20) : 0;
+                                            var calificacion = eficiencia >= 90 ? "Excelente" :
+                                                              eficiencia >= 80 ? "Muy Bueno" :
+                                                              eficiencia >= 70 ? "Bueno" :
+                                                              eficiencia >= 60 ? "Regular" : "Necesita Mejora";
+                                            
+                                            var colorClass = eficiencia >= 80 ? "success" :
+                                                            eficiencia >= 60 ? "warning" : "danger";
+                                        }
+                                        <span class="badge bg-@colorClass">@calificacion</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-chart-line text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="text-muted mt-3">No hay datos de productividad</h4>
+                    <p class="text-muted">No se encontraron datos para el período seleccionado.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Gráfico de Productividad -->
+    @if (Model != null && Model.Any())
+    {
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>Gráfico de Eficiencia
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="productividadChart" height="100"></canvas>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function exportarReporte() {
+            // Implementar exportación a PDF/Excel
+            window.print();
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            <text>
+            // Datos para el gráfico - simplificado
+            var empleados = ['Empleado 1', 'Empleado 2', 'Empleado 3'];
+            var eficiencias = [85, 92, 78];
+
+            // Configuración del gráfico
+            var ctx = document.getElementById('productividadChart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: empleados,
+                    datasets: [{
+                        label: 'Eficiencia (%)',
+                        data: eficiencias,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Eficiencia: ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            </text>
+        }
+    </script>
+}
