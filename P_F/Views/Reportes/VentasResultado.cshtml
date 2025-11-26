@@ -57,7 +57,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Total Ventas</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">$@totalPeriodo.ToString("N2")</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@(totalPeriodo > 0 ? "$" + totalPeriodo.ToString("N2") : "Sin datos")</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -74,7 +74,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 Cantidad Facturas</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Count()</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@(Model != null ? Model.Count().ToString() : "Sin datos")</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-file-invoice fa-2x text-gray-300"></i>
@@ -92,7 +92,7 @@
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                 Promedio Diario</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                $@(Model.Any() ? (totalPeriodo / Model.Count()).ToString("N2") : "0.00")
+                                @(Model != null && Model.Any() ? "$" + (totalPeriodo / Model.Count()).ToString("N2") : "Sin datos")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -105,7 +105,7 @@
     </div>
 }
 
-@if (Model.Any())
+@if (Model != null && Model.Any())
 {
     <div class="card shadow mb-4">
         <div class="card-header py-3">

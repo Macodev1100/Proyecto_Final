@@ -11,98 +11,40 @@ namespace P_F.Data
             UserManager<IdentityUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
-            // Asegurar que la base de datos está creada
-            await context.Database.MigrateAsync();
+            if (!await context.Database.CanConnectAsync())
+                throw new Exception("No se puede conectar a la base de datos.");
 
-            // Crear roles si no existen
-            await CreateRoles(roleManager);
+            await context.Database.EnsureCreatedAsync();
+            var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+            if (pendingMigrations.Any())
+                await context.Database.MigrateAsync();
 
-            // Crear usuarios de prueba si no existen
-            await CreateDefaultUsers(userManager);
-        }
-
-        private static async Task CreateRoles(RoleManager<IdentityRole> roleManager)
-        {
-            var roles = Roles.GetAllRoles();
-
+            // Crear roles
+            string[] roles = { "Administrador", "Mecanico", "Recepcionista", "Supervisor" };
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
-                {
                     await roleManager.CreateAsync(new IdentityRole(role));
-                }
             }
-        }
 
-        private static async Task CreateDefaultUsers(UserManager<IdentityUser> userManager)
-        {
-            // Usuario Administrador
-            if (await userManager.FindByEmailAsync("admin@tallerpyf.com") == null)
+            // Crear usuario admin
+            var adminEmail = "admin@tallerpyf.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
             {
-                var adminUser = new IdentityUser
+                adminUser = new IdentityUser
                 {
-                    UserName = "admin@tallerpyf.com",
-                    Email = "admin@tallerpyf.com",
+                    UserName = adminEmail,
+                    Email = adminEmail,
                     EmailConfirmed = true
                 };
-
                 var result = await userManager.CreateAsync(adminUser, "Admin123!");
                 if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(adminUser, Roles.Administrador);
-                }
-            }
-
-            // Usuario Supervisor
-            if (await userManager.FindByEmailAsync("supervisor@tallerpyf.com") == null)
-            {
-                var supervisorUser = new IdentityUser
-                {
-                    UserName = "supervisor@tallerpyf.com",
-                    Email = "supervisor@tallerpyf.com",
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(supervisorUser, "Supervisor123!");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(supervisorUser, Roles.Supervisor);
-                }
-            }
-
-            // Usuario Mecánico
-            if (await userManager.FindByEmailAsync("mecanico@tallerpyf.com") == null)
-            {
-                var mecanicoUser = new IdentityUser
-                {
-                    UserName = "mecanico@tallerpyf.com",
-                    Email = "mecanico@tallerpyf.com",
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(mecanicoUser, "Mecanico123!");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(mecanicoUser, Roles.Mecanico);
-                }
-            }
-
-            // Usuario Recepcionista
-            if (await userManager.FindByEmailAsync("recepcionista@tallerpyf.com") == null)
-            {
-                var recepcionistaUser = new IdentityUser
-                {
-                    UserName = "recepcionista@tallerpyf.com",
-                    Email = "recepcionista@tallerpyf.com",
-                    EmailConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(recepcionistaUser, "Recepcionista123!");
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(recepcionistaUser, Roles.Recepcionista);
-                }
+                    await userManager.AddToRoleAsync(adminUser, "Administrador");
             }
         }
     }
 }
+
+
+

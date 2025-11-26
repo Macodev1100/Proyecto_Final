@@ -29,6 +29,38 @@ namespace P_F.Controllers
         [HttpGet]
         public IActionResult VentasPorPeriodo()
         {
+            // Por defecto, mostrar el mes actual
+            var fechaInicio = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var fechaFin = DateTime.Now;
+
+            var ventas = _context.Facturas
+                .Where(f => f.FechaEmision >= fechaInicio && f.FechaEmision <= fechaFin && f.Estado == EstadoFactura.Pagada)
+                .GroupBy(f => f.FechaEmision.Date)
+                .Select(g => new {
+                    Fecha = g.Key,
+                    Total = g.Sum(f => f.Total),
+                    Facturas = g.Count(),
+                    Servicios = 0, // Puedes calcular si tienes la relación
+                    Repuestos = 0  // Puedes calcular si tienes la relación
+                })
+                .OrderBy(v => v.Fecha)
+                .ToList();
+
+            ViewBag.FechaInicio = fechaInicio;
+            ViewBag.FechaFin = fechaFin;
+            ViewBag.TotalPeriodo = ventas.Sum(v => v.Total);
+            ViewBag.VentasDiarias = ventas.Select(v => new {
+                Fecha = v.Fecha,
+                Total = v.Total,
+                Facturas = v.Facturas,
+                Servicios = v.Servicios,
+                Repuestos = v.Repuestos
+            }).ToList();
+            ViewBag.VentasLabels = ventas.Select(v => v.Fecha.ToString("dd/MM")).ToList();
+            ViewBag.VentasData = ventas.Select(v => v.Total).ToList();
+            ViewBag.DistribucionLabels = new List<string> { "Servicios", "Repuestos", "Mano de Obra", "Diagnósticos" };
+            ViewBag.DistribucionData = new List<int>(); // Puedes poblar con datos reales si los tienes
+
             return View();
         }
 
@@ -70,6 +102,7 @@ namespace P_F.Controllers
             fechaInicio ??= DateTime.Now.AddDays(-30);
             fechaFin ??= DateTime.Now;
 
+
             var empleados = _context.Empleados.Where(e => e.Activo).ToList();
             var empleadosProductividad = new List<P_F.ViewModels.EmpleadoProductividad>();
 
@@ -98,6 +131,13 @@ namespace P_F.Controllers
                     .Take(5)
                     .ToList();
 
+                // NUEVO: Calcular total de minutos trabajados en el periodo
+                var minutosTrabajados = _context.Set<P_F.Models.Entities.RegistroTiempo>()
+                    .Where(r => r.EmpleadoId == empleado.EmpleadoId
+                        && r.FechaInicio >= fechaInicio && r.FechaInicio <= fechaFin)
+                    .Sum(r => (int?)r.MinutosTrabajados) ?? 0;
+                var horasTrabajadas = Math.Round(minutosTrabajados / 60.0m, 2);
+
                 // Calcular eficiencia básica
                 var eficiencia = ordenesCompletadas > 0 ? 
                     Math.Min(100, (ordenesCompletadas * 20) + (totalIngresos > 1000 ? 20 : 0)) : 0;
@@ -112,7 +152,8 @@ namespace P_F.Controllers
                     TotalIngresos = totalIngresos,
                     PromedioTiempoOrden = ordenesCompletadas > 0 ? 2.5m : 0,
                     EficienciaCalculada = eficiencia,
-                    OrdenesRecientes = ordenesRecientes
+                    OrdenesRecientes = ordenesRecientes,
+                    HorasTrabajadas = horasTrabajadas
                 });
             }
 

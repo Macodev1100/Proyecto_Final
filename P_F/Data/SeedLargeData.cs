@@ -18,25 +18,56 @@ namespace P_F.Data
 
             var random = new Random();
 
-            // Arrays de datos para generar nombres realistas
+
+            // Arrays de datos para generar variedad y realismo
             var nombres = new[] { "Juan", "María", "Pedro", "Ana", "Luis", "Carmen", "Jorge", "Rosa", "Carlos", "Laura",
                                   "Miguel", "Sofia", "Diego", "Elena", "Fernando", "Patricia", "Roberto", "Isabel", "Antonio", "Marta",
-                                  "Francisco", "Beatriz", "Javier", "Lucia", "Manuel", "Cristina", "Ricardo", "Gabriela", "Alberto", "Valentina" };
-            
+                                  "Francisco", "Beatriz", "Javier", "Lucia", "Manuel", "Cristina", "Ricardo", "Gabriela", "Alberto", "Valentina",
+                                  "Esteban", "Paula", "Andrés", "Verónica", "Hugo", "Daniela", "Santiago", "Camila", "Sebastián", "Julieta" };
+
             var apellidos = new[] { "García", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Martín",
                                    "Jiménez", "Ruiz", "Hernández", "Díaz", "Moreno", "Álvarez", "Muñoz", "Romero", "Alonso", "Gutiérrez",
-                                   "Navarro", "Torres", "Domínguez", "Vázquez", "Ramos", "Gil", "Ramírez", "Serrano", "Blanco", "Molina" };
+                                   "Navarro", "Torres", "Domínguez", "Vázquez", "Ramos", "Gil", "Ramírez", "Serrano", "Blanco", "Molina",
+                                   "Castro", "Ortega", "Delgado", "Ortiz", "Iglesias", "Santos", "Cruz", "Aguilar", "Pascual", "Peña" };
 
             var marcasVehiculos = new[] { "Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "Mazda", "Hyundai", "Kia", "Volkswagen", "BMW",
-                                         "Mercedes-Benz", "Audi", "Subaru", "Jeep", "Dodge", "Ram", "GMC", "Buick", "Cadillac", "Lexus" };
+                                         "Mercedes-Benz", "Audi", "Subaru", "Jeep", "Dodge", "Ram", "GMC", "Buick", "Cadillac", "Lexus",
+                                         "Renault", "Peugeot", "Fiat", "Seat", "Suzuki", "Chery", "BYD", "Geely", "Volvo", "Mini" };
 
             var modelosVehiculos = new[] { "Corolla", "Civic", "Focus", "Cruze", "Sentra", "Mazda3", "Elantra", "Forte", "Jetta", "320i",
-                                          "C-Class", "A4", "Impreza", "Cherokee", "Charger", "1500", "Sierra", "Enclave", "Escalade", "IS" };
+                                          "C-Class", "A4", "Impreza", "Cherokee", "Charger", "1500", "Sierra", "Enclave", "Escalade", "IS",
+                                          "Logan", "208", "Panda", "Ibiza", "Swift", "Tiggo", "Song", "Coolray", "XC40", "Cooper" };
 
-            var colores = new[] { "Blanco", "Negro", "Gris", "Plata", "Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Café", "Dorado", "Morado" };
+            var colores = new[] { "Blanco", "Negro", "Gris", "Plata", "Rojo", "Azul", "Verde", "Amarillo", "Naranja", "Café", "Dorado", "Morado",
+                                  "Turquesa", "Borgoña", "Champán", "Oliva", "Celeste", "Granate" };
 
             var especialidades = new[] { "Motor y Transmisión", "Sistema Eléctrico", "Frenos y Suspensión", "Aire Acondicionado",
-                                        "Diagnóstico Computarizado", "Mecánica General", "Carrocería y Pintura" };
+                                        "Diagnóstico Computarizado", "Mecánica General", "Carrocería y Pintura", "Electrónica", "Dirección y Ruedas" };
+
+            // Más variedad de servicios
+            var nombresServicios = new[] {
+                "Cambio de Aceite", "Alineación y Balanceo", "Revisión de Frenos", "Diagnóstico Computarizado", "Cambio de Batería",
+                "Reparación de Motor", "Cambio de Amortiguadores", "Reparación de Transmisión", "Cambio de Correa", "Revisión de Suspensión",
+                "Cambio de Pastillas de Freno", "Limpieza de Inyectores", "Reparación de Aire Acondicionado", "Cambio de Filtros",
+                "Reparación de Sistema Eléctrico", "Cambio de Embrague", "Reparación de Radiador", "Cambio de Bombillas", "Revisión General",
+                "Cambio de Neumáticos", "Reparación de Carrocería", "Pintura Parcial", "Pintura Completa", "Cambio de Parabrisas", "Reparación de Puertas"
+            };
+
+            var categoriasServicios = new[] { "Mecánica", "Eléctrico", "Carrocería", "Pintura", "Diagnóstico", "Mantenimiento" };
+
+            // Más variedad de repuestos (solo campos que existen en la entidad)
+            var nombresRepuestos = new[] {
+                "Filtro de Aceite", "Filtro de Aire", "Filtro de Combustible", "Filtro de Cabina", "Aceite Motor 5W-30", "Aceite Motor 10W-40",
+                "Aceite Transmisión", "Líquido Frenos", "Pastillas Freno Delanteras", "Pastillas Freno Traseras", "Discos Freno Delanteros",
+                "Discos Freno Traseros", "Batería 12V", "Alternador", "Motor Arranque", "Bujías", "Cables Bujías", "Correa Distribución",
+                "Correa Accesorios", "Tensor Correa", "Bomba Agua", "Termostato", "Radiador", "Mangueras Radiador", "Ventilador Radiador",
+                "Amortiguadores Delanteros", "Amortiguadores Traseros", "Rotulas", "Terminales Dirección", "Embrague Kit Completo", "Volante Motor",
+                "Cojinetes", "Retenes", "Sensor Oxígeno", "Sensor MAF", "Sensor Posición Cigüeñal", "Sensor Temperatura", "Faros Delanteros",
+                "Focos LED", "Luces Traseras", "Escobillas Limpiaparabrisas", "Neumático 185/65 R15", "Neumático 195/65 R15", "Neumático 205/55 R16",
+                "Balanceo Ruedas", "Alineación Computarizada", "Cambio Aceite", "Revisión General", "Escaneo Computadora", "Refrigerante",
+                "Limpiador Inyectores"
+            };
+            // ...el resto del código permanece igual...
 
             // 1. CREAR 100 CLIENTES
             Console.WriteLine("Creando 100 clientes...");
@@ -45,8 +76,8 @@ namespace P_F.Data
             {
                 var cliente = new Cliente
                 {
-                    Nombre = nombres[random.Next(nombres.Length)],
-                    Apellido = apellidos[random.Next(apellidos.Length)],
+                    Nombre = nombres.Length > 0 ? nombres[random.Next(nombres.Length)] : $"Cliente{i}",
+                    Apellido = apellidos.Length > 0 ? apellidos[random.Next(apellidos.Length)] : $"Apellido{i}",
                     DocumentoIdentidad = $"{random.Next(10000000, 99999999)}",
                     Telefono = $"555-{random.Next(1000, 9999)}",
                     Email = $"cliente{i}@email.com",
@@ -71,10 +102,10 @@ namespace P_F.Data
                     var vehiculo = new Vehiculo
                     {
                         Placa = $"{(char)random.Next(65, 91)}{(char)random.Next(65, 91)}{(char)random.Next(65, 91)}{random.Next(100, 999)}",
-                        Marca = marcasVehiculos[random.Next(marcasVehiculos.Length)],
-                        Modelo = modelosVehiculos[random.Next(modelosVehiculos.Length)],
+                        Marca = marcasVehiculos.Length > 0 ? marcasVehiculos[random.Next(marcasVehiculos.Length)] : "Marca",
+                        Modelo = modelosVehiculos.Length > 0 ? modelosVehiculos[random.Next(modelosVehiculos.Length)] : "Modelo",
                         Anio = random.Next(2010, 2025),
-                        Color = colores[random.Next(colores.Length)],
+                        Color = colores.Length > 0 ? colores[random.Next(colores.Length)] : "Color",
                         NumeroChasis = $"VIN{Guid.NewGuid().ToString("N").Substring(0, 14).ToUpper()}",
                         NumeroMotor = $"MOT{Guid.NewGuid().ToString("N").Substring(0, 14).ToUpper()}",
                         TipoCombustible = random.Next(2) == 0 ? "Gasolina" : "Diésel",
@@ -94,32 +125,17 @@ namespace P_F.Data
             // 3. CREAR 50 REPUESTOS ADICIONALES
             Console.WriteLine("Creando 50 repuestos...");
             var repuestos = new List<Repuesto>();
-            var nombresRepuestos = new[] {
-                "Filtro de Aceite", "Filtro de Aire", "Filtro de Combustible", "Filtro de Cabina",
-                "Aceite Motor 5W-30", "Aceite Motor 10W-40", "Aceite Transmisión", "Líquido Frenos",
-                "Pastillas Freno Delanteras", "Pastillas Freno Traseras", "Discos Freno Delanteros", "Discos Freno Traseros",
-                "Batería 12V", "Alternador", "Motor Arranque", "Bujías", "Cables Bujías",
-                "Correa Distribución", "Correa Accesorios", "Tensor Correa", "Bomba Agua",
-                "Termostato", "Radiador", "Mangueras Radiador", "Ventilador Radiador",
-                "Amortiguadores Delanteros", "Amortiguadores Traseros", "Rotulas", "Terminales Dirección",
-                "Embrague Kit Completo", "Volante Motor", "Cojinetes", "Retenes",
-                "Sensor Oxígeno", "Sensor MAF", "Sensor Posición Cigüeñal", "Sensor Temperatura",
-                "Faros Delanteros", "Focos LED", "Luces Traseras", "Escobillas Limpiaparabrisas",
-                "Neumático 185/65 R15", "Neumático 195/65 R15", "Neumático 205/55 R16", "Balanceo Ruedas",
-                "Alineación Computarizada", "Cambio Aceite", "Revisión General", "Escaneo Computadora",
-                "Refrigerante", "Limpiador Inyectores"
-            };
 
             for (int i = 0; i < 50; i++)
             {
                 var repuesto = new Repuesto
                 {
                     Codigo = $"REP{random.Next(1000, 9999)}",
-                    Nombre = nombresRepuestos[i % nombresRepuestos.Length] + (i > nombresRepuestos.Length ? $" V{i / nombresRepuestos.Length}" : ""),
-                    Descripcion = $"Repuesto de calidad para {marcasVehiculos[random.Next(marcasVehiculos.Length)]}",
+                    Nombre = nombresRepuestos.Length > 0 ? nombresRepuestos[i % nombresRepuestos.Length] + (i > nombresRepuestos.Length ? $" V{i / nombresRepuestos.Length}" : "") : $"Repuesto{i}",
+                    Descripcion = marcasVehiculos.Length > 0 ? $"Repuesto de calidad para {marcasVehiculos[random.Next(marcasVehiculos.Length)]}" : "Repuesto de calidad",
                     CategoriaRepuestoId = random.Next(1, 6),
-                    Marca = marcasVehiculos[random.Next(marcasVehiculos.Length)],
-                    Modelo = modelosVehiculos[random.Next(modelosVehiculos.Length)],
+                    Marca = marcasVehiculos.Length > 0 ? marcasVehiculos[random.Next(marcasVehiculos.Length)] : "Marca",
+                    Modelo = modelosVehiculos.Length > 0 ? modelosVehiculos[random.Next(modelosVehiculos.Length)] : "Modelo",
                     PrecioCosto = Math.Round((decimal)(random.Next(10, 500) + random.NextDouble()), 2),
                     PrecioVenta = 0, // Se calculará después
                     PorcentajeGanancia = random.Next(30, 80),
@@ -146,20 +162,20 @@ namespace P_F.Data
                 var tipoEmpleado = (TipoEmpleado)random.Next(0, 4);
                 var empleado = new Empleado
                 {
-                    Nombre = nombres[random.Next(nombres.Length)],
-                    Apellido = apellidos[random.Next(apellidos.Length)],
+                    Nombre = nombres.Length > 0 ? nombres[random.Next(nombres.Length)] : $"Empleado{i}",
+                    Apellido = apellidos.Length > 0 ? apellidos[random.Next(apellidos.Length)] : $"Apellido{i}",
                     DocumentoIdentidad = $"{random.Next(10000000, 99999999)}",
                     Telefono = $"555-{random.Next(1000, 9999)}",
                     Email = $"empleado{i}@tallerpyf.com",
                     Direccion = $"Avenida {random.Next(1, 50)} #{random.Next(1, 30)}-{random.Next(10, 99)}",
                     TipoEmpleado = tipoEmpleado,
-                    Especialidad = tipoEmpleado == TipoEmpleado.Mecanico ? especialidades[random.Next(especialidades.Length)] : null,
+                    Especialidad = tipoEmpleado == TipoEmpleado.Mecanico && especialidades.Length > 0 ? especialidades[random.Next(especialidades.Length)] : null,
                     SalarioHora = Math.Round((decimal)(random.Next(12, 25) + random.NextDouble()), 2),
                     PorcentajeComision = Math.Round((decimal)(random.Next(2, 8) + random.NextDouble()), 2),
                     FechaContratacion = DateTime.Now.AddDays(-random.Next(90, 1095)),
                     FechaTerminacion = null,
                     Activo = true,
-                    Observaciones = $"Empleado con experiencia en {especialidades[random.Next(especialidades.Length)]}"
+                    Observaciones = especialidades.Length > 0 ? $"Empleado con experiencia en {especialidades[random.Next(especialidades.Length)]}" : "Empleado con experiencia"
                 };
                 empleados.Add(empleado);
             }
@@ -194,7 +210,7 @@ namespace P_F.Data
                     FechaEntrega = estado == EstadoOrden.Completada ? fechaIngreso.AddDays(random.Next(1, 10)) : null,
                     Estado = estado,
                     Prioridad = (Prioridad)random.Next(0, 3),
-                    DescripcionProblema = problemasComunes[random.Next(problemasComunes.Length)],
+                    DescripcionProblema = problemasComunes.Length > 0 ? problemasComunes[random.Next(problemasComunes.Length)] : "Problema no especificado",
                     ObservacionesCliente = "Cliente solicita revisión detallada",
                     DiagnosticoTecnico = estado != EstadoOrden.Pendiente ? "Revisión completada, requiere cambios según especificado" : null,
                     RecomendacionesTecnico = estado != EstadoOrden.Pendiente ? "Se recomienda seguimiento en " + random.Next(3000, 5000) + " km" : null,
@@ -206,8 +222,8 @@ namespace P_F.Data
                     AutorizadoPorCliente = true,
                     FechaAutorizacion = fechaIngreso.AddHours(random.Next(1, 24)),
                     Activo = true,
-                    ClienteId = clientes[random.Next(clientes.Count)].ClienteId,
-                    VehiculoId = vehiculos[random.Next(vehiculos.Count)].VehiculoId,
+                    ClienteId = clientes.Count > 0 ? clientes[random.Next(clientes.Count)].ClienteId : 0,
+                    VehiculoId = vehiculos.Count > 0 ? vehiculos[random.Next(vehiculos.Count)].VehiculoId : 0,
                     EmpleadoAsignadoId = mecanicos.Count > 0 ? mecanicos[random.Next(mecanicos.Count)].EmpleadoId : null,
                     EmpleadoRecepcionId = recepcionistas.Count > 0 ? recepcionistas[random.Next(recepcionistas.Count)].EmpleadoId : null
                 };
@@ -230,6 +246,7 @@ namespace P_F.Data
                 int cantServicios = random.Next(1, 4);
                 for (int i = 0; i < cantServicios; i++)
                 {
+                    if (servicios.Count == 0) continue;
                     var servicio = servicios[random.Next(servicios.Count)];
                     var ordenServicio = new OrdenTrabajoServicio
                     {
@@ -259,6 +276,7 @@ namespace P_F.Data
                 int cantRepuestos = random.Next(1, 5);
                 for (int i = 0; i < cantRepuestos; i++)
                 {
+                    if (repuestos.Count == 0) continue;
                     var repuesto = repuestos[random.Next(repuestos.Count)];
                     var ordenRepuesto = new OrdenTrabajoRepuesto
                     {
@@ -284,6 +302,11 @@ namespace P_F.Data
             
             foreach (var orden in ordenesCompletadas.Take(80))
             {
+                var empleadoId = orden.EmpleadoRecepcionId;
+                if (!empleadoId.HasValue && empleados.Count > 0)
+                {
+                    empleadoId = empleados.First().EmpleadoId;
+                }
                 var factura = new Factura
                 {
                     NumeroFactura = $"FAC-{DateTime.Now.Year}-{facturas.Count + 1:D4}",
@@ -297,7 +320,7 @@ namespace P_F.Data
                     Observaciones = "Factura generada automáticamente",
                     ClienteId = orden.ClienteId,
                     OrdenTrabajoId = orden.OrdenTrabajoId,
-                    EmpleadoId = orden.EmpleadoRecepcionId ?? empleados.First().EmpleadoId
+                    EmpleadoId = empleadoId ?? 0 // 0 if no empleados available
                 };
                 facturas.Add(factura);
             }
@@ -353,7 +376,7 @@ namespace P_F.Data
                     Motivo = "Compra inicial",
                     DocumentoReferencia = $"COMP-{random.Next(1000, 9999)}",
                     FechaMovimiento = DateTime.Now.AddDays(-random.Next(30, 180)),
-                    EmpleadoId = empleados.FirstOrDefault()?.EmpleadoId
+                    EmpleadoId = empleados.Count > 0 ? empleados.FirstOrDefault()?.EmpleadoId : null
                 });
 
                 // Algunas salidas
@@ -370,7 +393,7 @@ namespace P_F.Data
                         Motivo = "Venta",
                         DocumentoReferencia = $"ORD-{random.Next(1000, 9999)}",
                         FechaMovimiento = DateTime.Now.AddDays(-random.Next(1, 30)),
-                        EmpleadoId = empleados.FirstOrDefault()?.EmpleadoId
+                        EmpleadoId = empleados.Count > 0 ? empleados.FirstOrDefault()?.EmpleadoId : null
                     });
                 }
             }

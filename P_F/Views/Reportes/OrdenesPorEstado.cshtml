@@ -413,8 +413,8 @@
                             </div>
                             <div class="ms-3 flex-grow-1">
                                 <p class="stat-label">@estado.Estado</p>
-                                <h3 class="stat-value">@estado.Cantidad</h3>
-                                <p class="stat-amount mb-0">$@estado.TotalMonto.ToString("N2")</p>
+                                <h3 class="stat-value">@(estado.Cantidad > 0 ? estado.Cantidad.ToString() : "Sin datos")</h3>
+                                <p class="stat-amount mb-0">@(estado.TotalMonto > 0 ? "$" + estado.TotalMonto.ToString("N2") : "Sin datos")</p>
                             </div>
                         </div>
                     </div>
@@ -433,7 +433,7 @@
                     </div>
                     <div class="ms-3 flex-grow-1">
                         <p class="stat-label">Total Órdenes</p>
-                        <h3 class="stat-value">@ViewBag.TotalOrdenes</h3>
+                        <h3 class="stat-value">@(ViewBag.TotalOrdenes != null && ViewBag.TotalOrdenes > 0 ? ViewBag.TotalOrdenes.ToString() : "Sin datos")</h3>
                     </div>
                 </div>
             </div>
@@ -447,7 +447,7 @@
                     </div>
                     <div class="ms-3 flex-grow-1">
                         <p class="stat-label">Monto Total</p>
-                        <h3 class="stat-value">$@ViewBag.MontoTotal.ToString("N2")</h3>
+                        <h3 class="stat-value">@(ViewBag.MontoTotal != null && ViewBag.MontoTotal > 0 ? "$" + ViewBag.MontoTotal.ToString("N2") : "Sin datos")</h3>
                     </div>
                 </div>
             </div>
@@ -485,7 +485,7 @@
                                     <i class="fas fa-circle"></i>
                                     @estado.Estado
                                 </span>
-                                <span class="progress-percentage">@porcentaje.ToString("F1")%</span>
+                                <span class="progress-percentage">@(porcentaje > 0 ? porcentaje.ToString("F1") + "%" : "Sin datos")</span>
                             </div>
                             <div class="progress">
                                 <div class="progress-bar bg-@estadoClass" role="progressbar" style="width: @porcentaje.ToString("F1")%"></div>
@@ -532,14 +532,14 @@
                                         };
                                         <tr>
                                             <td>
-                                                <strong>@orden.NumeroOrden</strong>
+                                                <strong>@(string.IsNullOrEmpty(orden.NumeroOrden) ? "Sin datos" : orden.NumeroOrden)</strong>
                                             </td>
                                             <td>
                                                 <div>
-                                                    <strong>@orden.Cliente?.Nombre @orden.Cliente?.Apellido</strong>
+                                                    <strong>@((orden.Cliente != null && !string.IsNullOrEmpty(orden.Cliente.Nombre)) ? orden.Cliente.Nombre : "Sin datos") @((orden.Cliente != null && !string.IsNullOrEmpty(orden.Cliente.Apellido)) ? orden.Cliente.Apellido : "")</strong>
                                                     @if (!string.IsNullOrEmpty(orden.Cliente?.DocumentoIdentidad))
                                                     {
-                                                        <br><small class="text-muted">@orden.Cliente.DocumentoIdentidad</small>
+                                                        <br><small class="text-muted">@(!string.IsNullOrEmpty(orden.Cliente?.DocumentoIdentidad) ? orden.Cliente.DocumentoIdentidad : "Sin datos")</small>
                                                     }
                                                 </div>
                                             </td>
@@ -547,8 +547,8 @@
                                                 @if (orden.Vehiculo != null)
                                                 {
                                                     <div>
-                                                        <strong>@orden.Vehiculo.Marca @orden.Vehiculo.Modelo</strong>
-                                                        <br><small class="text-muted">@orden.Vehiculo.Placa</small>
+                                                        <strong>@((orden.Vehiculo != null && !string.IsNullOrEmpty(orden.Vehiculo.Marca)) ? orden.Vehiculo.Marca : "Sin datos") @((orden.Vehiculo != null && !string.IsNullOrEmpty(orden.Vehiculo.Modelo)) ? orden.Vehiculo.Modelo : "")</strong>
+                                                        <br><small class="text-muted">@(!string.IsNullOrEmpty(orden.Vehiculo?.Placa) ? orden.Vehiculo.Placa : "Sin datos")</small>
                                                     </div>
                                                 }
                                                 else
@@ -560,7 +560,7 @@
                                                 @if (orden.EmpleadoAsignado != null)
                                                 {
                                                     <span class="badge badge-info">
-                                                        @orden.EmpleadoAsignado.Nombre @orden.EmpleadoAsignado.Apellido
+                                                        @((orden.EmpleadoAsignado != null && !string.IsNullOrEmpty(orden.EmpleadoAsignado.Nombre)) ? orden.EmpleadoAsignado.Nombre : "Sin datos") @((orden.EmpleadoAsignado != null && !string.IsNullOrEmpty(orden.EmpleadoAsignado.Apellido)) ? orden.EmpleadoAsignado.Apellido : "")
                                                     </span>
                                                 }
                                                 else
@@ -578,7 +578,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <strong class="text-success">$@orden.Total.ToString("N2")</strong>
+                                            <strong class="text-success">@(orden.Total > 0 ? "$" + orden.Total.ToString("N2") : "Sin datos")</strong>
                                         </td>
                                         <td>
                                             <div class="btn-group" role="group">

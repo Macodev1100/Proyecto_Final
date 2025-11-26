@@ -727,9 +727,10 @@
                     </div>
                     <div class="metric-content">
                         <p class="metric-label">Órdenes Activas</p>
-                        <h3 class="metric-value">12</h3>
+                        <h3 class="metric-value">@(Model?.OrdenesActivas ?? 0)</h3>
                         <span class="metric-trend positive">
-                            <i class="fas fa-arrow-up"></i> +3 hoy
+                            <i class="fas fa-arrow-up"></i>
+                            @if ((Model?.OrdenesActivas ?? 0) == 0) { <span>-</span>; } else { <span>@(Model?.OrdenesActivas ?? 0) hoy</span>; }
                         </span>
                     </div>
                 </div>
@@ -745,9 +746,10 @@
                     </div>
                     <div class="metric-content">
                         <p class="metric-label">Ventas del Mes</p>
-                        <h3 class="metric-value">$215,000</h3>
+                        <h3 class="metric-value">$@String.Format("{0:N0}", Model?.VentasMes ?? 0)</h3>
                         <span class="metric-trend positive">
-                            <i class="fas fa-arrow-up"></i> +18% vs mes anterior
+                            <i class="fas fa-arrow-up"></i>
+                            @if ((Model?.VentasMes ?? 0) == 0) { <span>-</span>; } else { <span>+@(Model?.VariacionVentasMes ?? 0)% vs mes anterior</span>; }
                         </span>
                     </div>
                 </div>
@@ -763,9 +765,10 @@
                     </div>
                     <div class="metric-content">
                         <p class="metric-label">Total Clientes</p>
-                        <h3 class="metric-value">156</h3>
+                        <h3 class="metric-value">@(Model?.TotalClientes ?? 0)</h3>
                         <span class="metric-trend neutral">
-                            <i class="fas fa-user-plus"></i> 5 nuevos esta semana
+                            <i class="fas fa-user-plus"></i>
+                            @if ((Model?.NuevosClientesSemana ?? 0) == 0) { <span>-</span>; } else { <span>@(Model?.NuevosClientesSemana ?? 0) nuevos esta semana</span>; }
                         </span>
                     </div>
                 </div>
@@ -781,9 +784,10 @@
                     </div>
                     <div class="metric-content">
                         <p class="metric-label">Stock Crítico</p>
-                        <h3 class="metric-value">3</h3>
+                        <h3 class="metric-value">@(Model?.StockCritico ?? 0)</h3>
                         <span class="metric-trend negative">
-                            <i class="fas fa-exclamation-triangle"></i> Requiere atención
+                            <i class="fas fa-exclamation-triangle"></i>
+                            @if ((Model?.StockCritico ?? 0) == 0) { <span>-</span>; } else { <span>Requiere atención</span>; }
                         </span>
                     </div>
                 </div>
@@ -857,36 +861,7 @@
                     Notificaciones Recientes
                 </h5>
                 <div class="notification-list">
-                    <div class="notification-item priority-high">
-                        <div class="notification-icon" style="background: #fee; color: #e74a3b;">
-                            <i class="fas fa-exclamation-circle"></i>
-                        </div>
-                        <div class="notification-content">
-                            <p class="notification-title">Stock bajo en repuestos</p>
-                            <p class="notification-desc">Filtro de aceite - Solo quedan 2 unidades</p>
-                            <span class="notification-time">Hace 15 min</span>
-                        </div>
-                    </div>
-                    <div class="notification-item priority-medium">
-                        <div class="notification-icon" style="background: #fef8e7; color: #f6c23e;">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="notification-content">
-                            <p class="notification-title">Orden próxima a vencer</p>
-                            <p class="notification-desc">Orden #1024 - Cliente Juan Pérez</p>
-                            <span class="notification-time">Hace 1 hora</span>
-                        </div>
-                    </div>
-                    <div class="notification-item priority-low">
-                        <div class="notification-icon" style="background: #e8f8f5; color: #1cc88a;">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="notification-content">
-                            <p class="notification-title">Orden completada</p>
-                            <p class="notification-desc">Orden #1018 - Cliente María García</p>
-                            <span class="notification-time">Hace 2 horas</span>
-                        </div>
-                    </div>
+                    <div class="text-center text-muted py-4">Sin notificaciones</div>
                 </div>
             </div>
         </div>
@@ -902,7 +877,7 @@
                         Actividad del Mes
                     </h5>
                 </div>
-                <canvas id="activityChart" height="300"></canvas>
+                <div class="text-center text-muted py-5">Sin datos de actividad</div>
             </div>
         </div>
 
@@ -912,45 +887,7 @@
                     <i class="fas fa-history"></i>
                     Actividad Reciente
                 </h5>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Acción</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <strong>Orden #1028</strong><br>
-                                    <small class="text-muted">Cliente: Juan López</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge bg-success text-white">Completada</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Orden #1027</strong><br>
-                                    <small class="text-muted">Cliente: Ana Martínez</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge bg-warning text-white">En Proceso</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Orden #1026</strong><br>
-                                    <small class="text-muted">Cliente: Carlos Ruiz</small>
-                                </td>
-                                <td>
-                                    <span class="status-badge bg-info text-white">Pendiente</span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div class="text-center text-muted py-5">Sin actividad reciente</div>
             </div>
         </div>
     </div>
@@ -958,54 +895,3 @@
 
 <!-- Script para el gráfico -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('activityChart');
-        if (ctx) {
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                    datasets: [{
-                        label: 'Órdenes Completadas',
-                        data: [12, 19, 8, 15, 12, 18, 14],
-                        borderColor: '#1cc88a',
-                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Nuevas Órdenes',
-                        data: [8, 12, 10, 15, 14, 10, 16],
-                        borderColor: '#4e73df',
-                        backgroundColor: 'rgba(78, 115, 223, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: '#f1f3f5'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    });
-</script>

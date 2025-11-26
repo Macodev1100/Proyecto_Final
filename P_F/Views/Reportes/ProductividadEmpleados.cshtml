@@ -95,7 +95,7 @@
                                 Total Ingresos Período
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="@((int)(Model?.TotalIngresosPeriodo ?? 0))">
-                                $0
+                                @(Model != null && Model.TotalIngresosPeriodo > 0 ? "$" + Model.TotalIngresosPeriodo.ToString("N2") : "Sin datos")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -105,7 +105,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow-sm h-100 metric-card">
                 <div class="card-body">
@@ -115,7 +114,7 @@
                                 Órdenes Completadas
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="@(Model?.TotalOrdenesPeriodo ?? 0)">
-                                0
+                                @(Model != null && Model.TotalOrdenesPeriodo > 0 ? Model.TotalOrdenesPeriodo.ToString() : "Sin datos")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -125,7 +124,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow-sm h-100 metric-card">
                 <div class="card-body">
@@ -135,7 +133,7 @@
                                 Total Empleados
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="@(Model?.EmpleadosProductividad?.Count() ?? 0)">
-                                0
+                                @(Model != null && Model.EmpleadosProductividad != null && Model.EmpleadosProductividad.Count() > 0 ? Model.EmpleadosProductividad.Count().ToString() : "Sin datos")
                             </div>
                         </div>
                         <div class="col-auto">
@@ -145,21 +143,22 @@
                 </div>
             </div>
         </div>
-
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow-sm h-100 metric-card">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Mejor Empleado
+                                Total Horas Trabajadas
                             </div>
-                            <div class="h6 mb-0 font-weight-bold text-gray-800">
-                                @(Model?.EmpleadosProductividad?.OrderByDescending(e => e.TotalIngresos).FirstOrDefault()?.NombreCompleto?.Split(' ').FirstOrDefault() ?? "N/A")
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @(Model != null && Model.EmpleadosProductividad != null && Model.EmpleadosProductividad.Sum(e => e.HorasTrabajadas) > 0
+                                    ? Model.EmpleadosProductividad.Sum(e => e.HorasTrabajadas).ToString("N2") + " h"
+                                    : "Sin datos")
                             </div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-trophy fa-2x text-info"></i>
+                            <i class="fas fa-clock fa-2x text-info"></i>
                         </div>
                     </div>
                 </div>
@@ -168,6 +167,7 @@
     </div>
 
     <!-- Gráficos de Productividad -->
+
     @if (Model?.EmpleadosProductividad != null && Model.EmpleadosProductividad.Any())
     {
         <div class="row mb-4">
@@ -200,166 +200,56 @@
             <!-- Gráfico de Distribución de Ingresos -->
             <div class="col-xl-4 col-lg-5">
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-chart-pie me-2"></i>Distribución de Ingresos
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div style="position: relative; height: 400px;">
-                            <canvas id="distribucionChart"></canvas>
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-table me-2"></i>Detalle de Productividad por Empleado
+                            </h6>
+                            <div class="input-group" style="max-width: 300px;">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="buscarEmpleado" placeholder="Buscar empleado...">
+                            </div>
                         </div>
+                    </div>
+                    <div class="row mb-4">
+                        <!-- Aquí puedes agregar el gráfico de distribución y la tabla de empleados si aplica -->
+                        <canvas id="distribucionChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Gráfico de Eficiencia vs Órdenes -->
+        <!-- Tabla detallada de productividad por empleado -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card shadow-sm">
-                    <div class="card-header py-3">
+                    <div class="card-header py-3 d-flex align-items-center">
                         <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-chart-scatter me-2"></i>Eficiencia vs Órdenes Completadas
+                            <i class="fas fa-users me-2"></i>Resumen Detallado por Empleado
                         </h6>
-                    </div>
-                    <div class="card-body">
-                        <div style="position: relative; height: 300px;">
-                            <canvas id="eficienciaChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-
-    <!-- Tabla Detallada de Empleados -->
-    @if (Model?.EmpleadosProductividad != null && Model.EmpleadosProductividad.Any())
-    {
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-table me-2"></i>Detalle de Productividad por Empleado
-                        </h6>
-                        <div class="input-group" style="max-width: 300px;">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            <input type="text" class="form-control" id="buscarEmpleado" placeholder="Buscar empleado...">
-                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover" id="tablaEmpleados">
+                            <table class="table table-bordered table-hover">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-user me-2"></i>Empleado
-                                                <button class="btn btn-sm btn-link p-0 ms-1" onclick="ordenarTabla('nombre')">
-                                                    <i class="fas fa-sort"></i>
-                                                </button>
-                                            </div>
-                                        </th>
+                                        <th>Empleado</th>
                                         <th>Especialidad</th>
-                                        <th class="text-center">
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <i class="fas fa-check me-2"></i>Completadas
-                                                <button class="btn btn-sm btn-link p-0 ms-1" onclick="ordenarTabla('completadas')">
-                                                    <i class="fas fa-sort"></i>
-                                                </button>
-                                            </div>
-                                        </th>
-                                        <th class="text-center">
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <i class="fas fa-clock me-2"></i>En Proceso
-                                                <button class="btn btn-sm btn-link p-0 ms-1" onclick="ordenarTabla('proceso')">
-                                                    <i class="fas fa-sort"></i>
-                                                </button>
-                                            </div>
-                                        </th>
-                                        <th class="text-center">
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <i class="fas fa-dollar-sign me-2"></i>Ingresos
-                                                <button class="btn btn-sm btn-link p-0 ms-1" onclick="ordenarTabla('ingresos')">
-                                                    <i class="fas fa-sort"></i>
-                                                </button>
-                                            </div>
-                                        </th>
-                                        <th class="text-center">
-                                            <div class="d-flex align-items-center justify-content-center">
-                                                <i class="fas fa-percentage me-2"></i>Eficiencia
-                                                <button class="btn btn-sm btn-link p-0 ms-1" onclick="ordenarTabla('eficiencia')">
-                                                    <i class="fas fa-sort"></i>
-                                                </button>
-                                            </div>
-                                        </th>
-                                        <th class="text-center">
-                                            <i class="fas fa-star me-2"></i>Rendimiento
-                                        </th>
-                                        <th class="text-center">Acciones</th>
+                                        <th>Órdenes Completadas</th>
+                                        <th>Ingresos</th>
+                                        <th>Eficiencia (%)</th>
+                                        <th>Horas Trabajadas</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var empleado in Model.EmpleadosProductividad.OrderByDescending(e => e.TotalIngresos))
+                                    @foreach (var emp in Model.EmpleadosProductividad)
                                     {
-                                        var rendimientoClass = empleado.EficienciaCalculada >= 80 ? "success" : empleado.EficienciaCalculada >= 60 ? "warning" : "danger";
-                                        var rendimientoTexto = empleado.EficienciaCalculada >= 80 ? "Excelente" : empleado.EficienciaCalculada >= 60 ? "Bueno" : "Mejorable";
-                                        
-                                        <tr class="empleado-row" data-nombre="@empleado.NombreCompleto.ToLower()" data-completadas="@empleado.OrdenesCompletadas" data-proceso="@empleado.OrdenesEnProceso" data-ingresos="@empleado.TotalIngresos" data-eficiencia="@empleado.EficienciaCalculada">
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar-circle me-3">
-                                                        <i class="fas fa-user"></i>
-                                                    </div>
-                                                    <div>
-                                                        <div class="fw-bold">@empleado.NombreCompleto</div>
-                                                        <small class="text-muted">ID: @empleado.EmpleadoId</small>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-info rounded-pill">@empleado.Especialidad</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="badge bg-success rounded-pill fs-6">@empleado.OrdenesCompletadas</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="badge bg-warning rounded-pill fs-6">@empleado.OrdenesEnProceso</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="fw-bold text-success">
-                                                    $@empleado.TotalIngresos.ToString("N2")
-                                                </div>
-                                                @if (empleado.OrdenesCompletadas > 0)
-                                                {
-                                                    <small class="text-muted">Prom: $@((empleado.TotalIngresos / empleado.OrdenesCompletadas).ToString("N0"))</small>
-                                                }
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="progress-container">
-                                                    <div class="progress" style="height: 20px;">
-                                                        <div class="progress-bar bg-@rendimientoClass" role="progressbar" style="width: @empleado.EficienciaCalculada%">
-                                                            @empleado.EficienciaCalculada.ToString("F1")%
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <span class="badge bg-@rendimientoClass">@rendimientoTexto</span>
-                                            </td>
-                                            <td class="text-center">
-                                                <button class="btn btn-sm btn-outline-primary" onclick="verDetalle(@empleado.EmpleadoId)" title="Ver Detalle">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <a asp-controller="Empleados" asp-action="Details" asp-route-id="@empleado.EmpleadoId" 
-                                                   class="btn btn-sm btn-outline-success" title="Perfil Completo">
-                                                    <i class="fas fa-user-circle"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-outline-info" onclick="generarReporteIndividual(@empleado.EmpleadoId)" title="Reporte Individual">
-                                                    <i class="fas fa-file-pdf"></i>
-                                                </button>
-                                            </td>
+                                        <tr class="empleado-row" data-nombre="@emp.NombreCompleto.ToLower()">
+                                            <td>@emp.NombreCompleto</td>
+                                            <td>@emp.Especialidad</td>
+                                            <td>@(emp.OrdenesCompletadas > 0 ? emp.OrdenesCompletadas.ToString() : "Sin datos")</td>
+                                            <td>@(emp.TotalIngresos > 0 ? "$" + emp.TotalIngresos.ToString("N2") : "Sin datos")</td>
+                                            <td>@(emp.EficienciaCalculada > 0 ? emp.EficienciaCalculada.ToString("N2") : "Sin datos")</td>
+                                            <td>@(emp.HorasTrabajadas > 0 ? emp.HorasTrabajadas.ToString("N2") + " h" : "Sin datos")</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -369,106 +259,29 @@
                 </div>
             </div>
         </div>
-    }
-    else
-    {
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-user-times fa-4x text-gray-300 mb-4"></i>
-                        <h4 class="text-gray-600">No hay datos de productividad</h4>
-                        <p class="text-muted mb-4">No se encontraron datos de productividad para el período seleccionado.</p>
-                        <button class="btn btn-primary" onclick="location.reload()">
-                            <i class="fas fa-refresh me-2"></i>Actualizar Datos
-                        </button>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-bullseye me-2"></i>Eficiencia de Empleados
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div style="position: relative; height: 400px;">
+                            <canvas id="eficienciaChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     }
-</div>
-
-<!-- Modal de Detalle de Empleado -->
-<div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
-                    <i class="fas fa-user-cog me-2"></i>Detalle de Productividad
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="modalDetalleContent">
-                <!-- Contenido se carga dinámicamente -->
-            </div>
+    else
+    {
+        <div class="row mb-4">
+            <div class="col-12 text-center text-muted py-5">Sin datos de productividad</div>
         </div>
-    </div>
-</div>
-
-<style>
-.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
-.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
-.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
-.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
-
-.metric-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.metric-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.counter-value {
-    opacity: 0;
-    animation: fadeInUp 2s ease-out forwards;
-}
-
-.avatar-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #4e73df, #224abe);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.progress-container {
-    min-width: 120px;
-}
-
-.bg-gradient-primary {
-    background: linear-gradient(45deg, #4e73df, #224abe);
-}
-
-.table th {
-    border-top: none;
-    font-weight: 600;
-}
-
-.empleado-row:hover {
-    background-color: rgba(78, 115, 223, 0.05);
-}
-
-.card {
-    border: none;
-    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-}
-
-.card-header {
-    background-color: #f8f9fc;
-    border-bottom: 1px solid #e3e6f0;
-}
-
-.card-header {
-    background-color: #f8f9fc;
-    border-bottom: 1px solid #e3e6f0;
-}
-</style>
+    }
 
 @section Scripts {
     <script>

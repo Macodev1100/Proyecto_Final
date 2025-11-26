@@ -34,5 +34,7 @@ namespace P_F.ViewModels
         public decimal PromedioTiempoOrden { get; set; }
         public decimal EficienciaCalculada { get; set; }
         public List<OrdenTrabajo> OrdenesRecientes { get; set; } = new();
+        // NUEVO: Total de horas trabajadas en el periodo
+        public decimal HorasTrabajadas { get; set; }
     }
 }

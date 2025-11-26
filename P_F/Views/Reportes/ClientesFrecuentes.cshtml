@@ -78,39 +78,38 @@
 
             <!-- Estadísticas generales -->
             <div class="row mb-4">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Total Clientes</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@(Model?.Count() ?? 0)</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-users fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Total Órdenes</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">@(ViewBag.TotalOrdenes ?? 0)</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                @if (Model != null && Model.Any())
+                {
+                    <!-- Aquí puedes agregar tarjetas de métricas reales si existen -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Cliente Frecuente
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            @{
+                                                var primerCliente = (Model != null && Model.Any()) ? Model.FirstOrDefault() : null;
+                                                var nombreProp = primerCliente?.GetType().GetProperty("Nombre");
+                                                var nombreValor = nombreProp != null ? nombreProp.GetValue(primerCliente) as string : null;
+                                            }
+                                            @(string.IsNullOrEmpty(nombreValor) ? "Sin datos" : nombreValor)
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="col-12 text-center text-muted py-5">Sin datos de clientes frecuentes</div>
+                }
 
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-info shadow h-100 py-2">
@@ -120,7 +119,10 @@
                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                         Facturación Total</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        $0.00
+                                        @{
+                                            decimal? totalFacturado = (Model != null && Model.Any()) ? Model.Sum(c => (decimal?)c.TotalFacturado) : null;
+                                        }
+                                        @(totalFacturado.HasValue && totalFacturado.Value > 0 ? "$" + totalFacturado.Value.ToString("N2") : "Sin datos")
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -139,7 +141,11 @@
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                         Promedio por Cliente</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        $0.00
+                                        @{
+                                            decimal? totalFacturadoProm = (Model != null && Model.Any()) ? Model.Sum(c => (decimal?)c.TotalFacturado) : null;
+                                            int? totalOrdenesProm = (Model != null && Model.Any()) ? Model.Sum(c => (int?)c.TotalOrdenes) : null;
+                                        }
+                                        @(totalFacturadoProm.HasValue && totalFacturadoProm.Value > 0 && totalOrdenesProm.HasValue && totalOrdenesProm.Value > 0 ? "$" + (totalFacturadoProm.Value / totalOrdenesProm.Value).ToString("N2") : "Sin datos")
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -201,8 +207,8 @@
                                                         <i class="fas fa-user text-white"></i>
                                                     </div>
                                                     <div>
-                                                        <div class="font-weight-bold">@cliente.Cliente.Nombre @cliente.Cliente.Apellido</div>
-                                                        <div class="small text-gray-500">ID: @cliente.Cliente.ClienteId</div>
+                                                        <div class="font-weight-bold">@((cliente.Cliente != null && !string.IsNullOrEmpty(cliente.Cliente.Nombre)) ? cliente.Cliente.Nombre : "Sin datos") @((cliente.Cliente != null && !string.IsNullOrEmpty(cliente.Cliente.Apellido)) ? cliente.Cliente.Apellido : "")</div>
+                                                        <div class="small text-gray-500">ID: @(cliente.Cliente != null ? cliente.Cliente.ClienteId.ToString() : "Sin datos")</div>
                                                     </div>
                                                 </div>
                                             </td>
@@ -210,22 +216,22 @@
                                                 <div>
                                                     @if (!string.IsNullOrEmpty(cliente.Cliente.Telefono))
                                                     {
-                                                        <div><i class="fas fa-phone text-muted me-1"></i>@cliente.Cliente.Telefono</div>
+                                                        <div><i class="fas fa-phone text-muted me-1"></i>@(cliente.Cliente != null && !string.IsNullOrEmpty(cliente.Cliente.Telefono) ? cliente.Cliente.Telefono : "Sin datos")</div>
                                                     }
                                                     @if (!string.IsNullOrEmpty(cliente.Cliente.Email))
                                                     {
-                                                        <div><i class="fas fa-envelope text-muted me-1"></i>@cliente.Cliente.Email</div>
+                                                        <div><i class="fas fa-envelope text-muted me-1"></i>@(cliente.Cliente != null && !string.IsNullOrEmpty(cliente.Cliente.Email) ? cliente.Cliente.Email : "Sin datos")</div>
                                                     }
                                                 </div>
                                             </td>
                                             <td>
                                                 <span class="badge badge-primary font-size-12">
-                                                    @cliente.TotalOrdenes órdenes
+                                                    @(cliente.TotalOrdenes > 0 ? cliente.TotalOrdenes.ToString() + " órdenes" : "Sin datos")
                                                 </span>
                                             </td>
                                             <td>
                                                 <div class="font-weight-bold text-success">
-                                                    $@cliente.TotalFacturado.ToString("N2")
+                                                    @(cliente.TotalFacturado > 0 ? "$" + cliente.TotalFacturado.ToString("N2") : "Sin datos")
                                                 </div>
                                             </td>
                                             <td>
@@ -245,7 +251,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                $@(cliente.TotalOrdenes > 0 ? (cliente.TotalFacturado / cliente.TotalOrdenes).ToString("N2") : "0.00")
+                                                @(cliente.TotalFacturado > 0 && cliente.TotalOrdenes > 0 ? "$" + (cliente.TotalFacturado / cliente.TotalOrdenes).ToString("N2") : "Sin datos")
                                             </td>
                                             <td>
                                                 @{

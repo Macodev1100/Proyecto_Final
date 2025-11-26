@@ -41,10 +41,11 @@
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Ventas Este Mes
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="125000">
-                                $0
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @(ViewBag.VentasMes != null ? ("$" + ((decimal)ViewBag.VentasMes).ToString("N2")) : "Sin datos")
                             </div>
-                            <small class="text-success"><i class="fas fa-arrow-up"></i> +12% vs mes anterior</small>
+                            <small class="text-success"><i class="fas fa-arrow-up"></i> @((ViewBag.VariacionVentasMes != null) ? ($"+{ViewBag.VariacionVentasMes}% vs mes anterior") : "-")</small>
+                                                        <small class="text-success"><i class="fas fa-arrow-up"></i> @(ViewBag.VariacionVentasMes != null ? ($"+{ViewBag.VariacionVentasMes}% vs mes anterior") : "-")</small>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-dollar-sign fa-2x text-primary"></i>
@@ -62,10 +63,11 @@
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Órdenes Activas
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="28">
-                                0
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @(ViewBag.OrdenesActivas != null ? ViewBag.OrdenesActivas.ToString() : "Sin datos")
                             </div>
-                            <small class="text-warning"><i class="fas fa-clock"></i> 8 pendientes entrega</small>
+                            <small class="text-warning"><i class="fas fa-clock"></i> @((ViewBag.PendientesEntrega != null) ? ($"{ViewBag.PendientesEntrega} pendientes entrega") : "-")</small>
+                                                        <small class="text-warning"><i class="fas fa-clock"></i> @(ViewBag.PendientesEntrega != null ? ($"{ViewBag.PendientesEntrega} pendientes entrega") : "-")</small>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-clipboard-list fa-2x text-success"></i>
@@ -84,7 +86,7 @@
                                 Clientes Nuevos
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="15">
-                                0
+                                @(ViewBag.ClientesNuevos != null ? ViewBag.ClientesNuevos.ToString() : "0")
                             </div>
                             <small class="text-info"><i class="fas fa-users"></i> Este mes</small>
                         </div>
@@ -105,7 +107,7 @@
                                 Stock Crítico
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="7">
-                                0
+                                @(ViewBag.StockCritico != null ? ViewBag.StockCritico.ToString() : "0")
                             </div>
                             <small class="text-danger"><i class="fas fa-exclamation-triangle"></i> Requieren atención</small>
                         </div>

@@ -168,7 +168,17 @@ public class UsuariosController : Controller
         }
         catch (Exception ex)
         {
-            TempData["ErrorMessage"] = $"Error al cargar datos de prueba: {ex.Message}";
+            // Captura la excepción interna completa para diagnóstico
+            var errorMsg = $"Error al cargar datos de prueba: {ex.Message}";
+            if (ex.InnerException != null)
+            {
+                errorMsg += $" | Inner: {ex.InnerException.Message}";
+                if (ex.InnerException.InnerException != null)
+                    errorMsg += $" | Inner2: {ex.InnerException.InnerException.Message}";
+            }
+            TempData["ErrorMessage"] = errorMsg;
+            Console.WriteLine(errorMsg);
+            Console.WriteLine(ex.ToString());
         }
 
         return RedirectToAction(nameof(Index));

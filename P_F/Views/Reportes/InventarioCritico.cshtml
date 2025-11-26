@@ -23,7 +23,7 @@
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-danger">
-                Repuestos con Stock Crítico (@Model.Count() repuestos)
+                @(Model != null && Model.Count() > 0 ? $"Repuestos con Stock Crítico ({Model.Count()} repuestos)" : "Sin datos de repuestos críticos")
             </h6>
         </div>
         <div class="card-body">
@@ -40,41 +40,44 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var repuesto in Model)
+                        @if (Model != null)
                         {
-                            var alertLevel = repuesto.StockActual == 0 ? "danger" : 
-                                           repuesto.StockActual <= repuesto.StockMinimo ? "warning" : "success";
-                            <tr>
-                                <td>
-                                    <strong>@repuesto.Nombre</strong>
-                                    @if (!string.IsNullOrEmpty(repuesto.Codigo))
-                                    {
-                                        <br><small class="text-muted">Código: @repuesto.Codigo</small>
-                                    }
-                                </td>
-                                <td>Sin categoría</td>
-                                <td>
-                                    <span class="badge badge-@alertLevel">
-                                        @repuesto.StockActual
-                                    </span>
-                                </td>
-                                <td>@repuesto.StockMinimo</td>
-                                <td>$@repuesto.PrecioVenta.ToString("N2")</td>
-                                <td>
-                                    @if (repuesto.StockActual == 0)
-                                    {
-                                        <span class="badge badge-danger">Sin Stock</span>
-                                    }
-                                    else if (repuesto.StockActual <= repuesto.StockMinimo)
-                                    {
-                                        <span class="badge badge-warning">Crítico</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-success">Normal</span>
-                                    }
-                                </td>
-                            </tr>
+                            foreach (var repuesto in Model)
+                            {
+                                var alertLevel = repuesto.StockActual == 0 ? "danger" : 
+                                               repuesto.StockActual <= repuesto.StockMinimo ? "warning" : "success";
+                                <tr>
+                                    <td>
+                                        <strong>@(string.IsNullOrEmpty(repuesto.Nombre) ? "Sin datos" : repuesto.Nombre)</strong>
+                                        @if (!string.IsNullOrEmpty(repuesto.Codigo))
+                                        {
+                                            <br><small class="text-muted">@(!string.IsNullOrEmpty(repuesto.Codigo) ? $"Código: {repuesto.Codigo}" : "Sin código")</small>
+                                        }
+                                    </td>
+                                    <td>Sin categoría</td>
+                                    <td>
+                                        <span class="badge badge-@alertLevel">
+                                            @(repuesto.StockActual > 0 ? repuesto.StockActual.ToString() : "Sin datos")
+                                        </span>
+                                    </td>
+                                    <td>@(repuesto.StockMinimo > 0 ? repuesto.StockMinimo.ToString() : "Sin datos")</td>
+                                    <td>@(repuesto.PrecioVenta > 0 ? "$" + repuesto.PrecioVenta.ToString("N2") : "Sin datos")</td>
+                                    <td>
+                                        @if (repuesto.StockActual == 0)
+                                        {
+                                            <span class="badge badge-danger">Sin Stock</span>
+                                        }
+                                        else if (repuesto.StockActual <= repuesto.StockMinimo)
+                                        {
+                                            <span class="badge badge-warning">Crítico</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-success">Normal</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
