@@ -16,11 +16,18 @@ namespace P_F.Controllers
             _context = context;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+            // Si está autenticado, redirigir al dashboard
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction(nameof(Dashboard));
+            }
             return View();
         }
 
+        [Authorize]
         public async Task<IActionResult> Dashboard()
         {
             return View();

@@ -120,7 +120,7 @@
                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                         Facturación Total</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Q 0.00
+                                        $0.00
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -139,7 +139,7 @@
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                         Promedio por Cliente</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Q 0.00
+                                        $0.00
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -152,7 +152,7 @@
             </div>
 
             <!-- Tabla de clientes frecuentes -->
-            @if (Model.Any())
+            @if (Model != null && Model.Any())
             {
                 <div class="card shadow">
                     <div class="card-header">
@@ -225,7 +225,7 @@
                                             </td>
                                             <td>
                                                 <div class="font-weight-bold text-success">
-                                                    Q @cliente.TotalFacturado.ToString("N2")
+                                                    $@cliente.TotalFacturado.ToString("N2")
                                                 </div>
                                             </td>
                                             <td>
@@ -245,7 +245,7 @@
                                                 }
                                             </td>
                                             <td>
-                                                Q @(cliente.TotalOrdenes > 0 ? (cliente.TotalFacturado / cliente.TotalOrdenes).ToString("N2") : "0.00")
+                                                $@(cliente.TotalOrdenes > 0 ? (cliente.TotalFacturado / cliente.TotalOrdenes).ToString("N2") : "0.00")
                                             </td>
                                             <td>
                                                 @{
@@ -348,7 +348,7 @@
         });
 
         // Configurar gráfico de clientes
-        @if (Model.Any())
+        @if (Model != null && Model.Any())
         {
             <text>
                 var ctx = document.getElementById('clientesChart').getContext('2d');
@@ -382,7 +382,7 @@
                                 label: function(tooltipItem, chart) {
                                     var dataLabel = chart.labels[tooltipItem.index];
                                     var value = chart.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                                    return dataLabel + ': Q' + value.toFixed(2);
+                                    return dataLabel + ': $' + value.toFixed(2);
                                 }
                             }
                         },

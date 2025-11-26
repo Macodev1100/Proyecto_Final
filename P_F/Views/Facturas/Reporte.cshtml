@@ -75,7 +75,7 @@
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                         Total Facturado</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Q @((Model?.TotalFacturado ?? 0).ToString("N2"))
+                                        $@((Model?.TotalFacturado ?? 0).ToString("N2"))
                                     </div>
                                 </div>
                                 <div class="col-auto">
@@ -182,9 +182,9 @@
                                                     @factura.Estado
                                                 </span>
                                             </td>
-                                            <td>Q @factura.SubTotal.ToString("N2")</td>
-                                            <td>Q @factura.Impuestos.ToString("N2")</td>
-                                            <td>Q @factura.Total.ToString("N2")</td>
+                                            <td>$@factura.SubTotal.ToString("N2")</td>
+                                            <td>$@factura.Impuestos.ToString("N2")</td>
+                                            <td>$@factura.Total.ToString("N2")</td>
                                             <td>
                                                 <a asp-controller="Facturas" asp-action="Details" asp-route-id="@factura.FacturaId" 
                                                    class="btn btn-info btn-sm" title="Ver Detalles">

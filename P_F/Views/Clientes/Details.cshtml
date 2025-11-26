@@ -1,4 +1,4 @@
-@model P_F.Models.Entities.Cliente
+@model P_F.Models.DTOs.ClienteDTO
 
 @{
     ViewData["Title"] = $"Cliente: {Model.Nombre} {Model.Apellido}";
@@ -135,7 +135,7 @@
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">
                     <i class="fas fa-car me-2"></i>Vehículos Registrados
-                    <span class="badge bg-info ms-2">@Model.Vehiculos.Count()</span>
+                    <span class="badge bg-info ms-2">@(Model.Vehiculos?.Count() ?? 0)</span>
                 </h6>
                 <a asp-controller="Vehiculos" asp-action="Create" asp-route-clienteId="@Model.ClienteId" 
                    class="btn btn-success btn-sm">
@@ -143,7 +143,7 @@
                 </a>
             </div>
             <div class="card-body">
-                @if (Model.Vehiculos.Any())
+                @if (Model.Vehiculos != null && Model.Vehiculos.Any())
                 {
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -173,7 +173,7 @@
                                         </td>
                                         <td>@vehiculo.Anio</td>
                                         <td>@vehiculo.Color</td>
-                                        <td>@vehiculo.Kilometraje.ToString("N0") km</td>
+                                        <td>@((vehiculo.Kilometraje ?? 0).ToString("N0")) km</td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
                                                 <a asp-controller="Vehiculos" asp-action="Details" asp-route-id="@vehiculo.VehiculoId" 
@@ -217,7 +217,7 @@
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">
                     <i class="fas fa-clipboard-list me-2"></i>Historial de Órdenes de Trabajo
-                    <span class="badge bg-info ms-2">@Model.OrdenesTrabajo.Count()</span>
+                    <span class="badge bg-info ms-2">@(Model.OrdenesTrabajo?.Count() ?? 0)</span>
                 </h6>
                 <a asp-controller="OrdenesTrabajo" asp-action="Create" asp-route-clienteId="@Model.ClienteId" 
                    class="btn btn-primary btn-sm">
@@ -225,7 +225,7 @@
                 </a>
             </div>
             <div class="card-body">
-                @if (Model.OrdenesTrabajo.Any())
+                @if (Model.OrdenesTrabajo != null && Model.OrdenesTrabajo.Any())
                 {
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -245,8 +245,8 @@
                                     <tr>
                                         <td><strong>@orden.NumeroOrden</strong></td>
                                         <td>
-                                            @orden.Vehiculo?.Placa
-                                            <br><small class="text-muted">@orden.Vehiculo?.Marca @orden.Vehiculo?.Modelo</small>
+                                            @orden.VehiculoPlaca
+                                            <br><small class="text-muted">Vehículo</small>
                                         </td>
                                         <td>
                                             @orden.FechaIngreso.ToString("dd/MM/yyyy")
@@ -285,12 +285,12 @@
                         </table>
                     </div>
                     
-                    @if (Model.OrdenesTrabajo.Count() > 10)
+                    @if (Model.OrdenesTrabajo != null && Model.OrdenesTrabajo.Count() > 10)
                     {
                         <div class="text-center">
                             <a asp-controller="OrdenesTrabajo" asp-action="Index" asp-route-clienteId="@Model.ClienteId" 
                                class="btn btn-outline-primary">
-                                <i class="fas fa-list me-2"></i>Ver Todas las Órdenes (@Model.OrdenesTrabajo.Count())
+                                <i class="fas fa-list me-2"></i>Ver Todas las Órdenes (@(Model.OrdenesTrabajo?.Count() ?? 0))
                             </a>
                         </div>
                     }

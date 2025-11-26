@@ -95,7 +95,7 @@
                                 Total Ingresos Período
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="@((int)(Model?.TotalIngresosPeriodo ?? 0))">
-                                Q 0
+                                $0
                             </div>
                         </div>
                         <div class="col-auto">
@@ -329,11 +329,11 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="fw-bold text-success">
-                                                    Q @empleado.TotalIngresos.ToString("N2")
+                                                    $@empleado.TotalIngresos.ToString("N2")
                                                 </div>
                                                 @if (empleado.OrdenesCompletadas > 0)
                                                 {
-                                                    <small class="text-muted">Prom: Q @((empleado.TotalIngresos / empleado.OrdenesCompletadas).ToString("N0"))</small>
+                                                    <small class="text-muted">Prom: $@((empleado.TotalIngresos / empleado.OrdenesCompletadas).ToString("N0"))</small>
                                                 }
                                             </td>
                                             <td class="text-center">
@@ -492,14 +492,14 @@
                 let current = 0;
                 const increment = target / 50;
                 
-                if (counter.textContent.includes('Q')) {
+                if (counter.textContent.includes('$')) {
                     const timer = setInterval(() => {
                         current += increment;
                         if (current >= target) {
                             current = target;
                             clearInterval(timer);
                         }
-                        counter.textContent = 'Q ' + Math.floor(current).toLocaleString();
+                        counter.textContent = '$' + Math.floor(current).toLocaleString();
                     }, 40);
                 } else {
                     const timer = setInterval(() => {
@@ -531,7 +531,7 @@
                         data: {
                             labels: empleadosData.map(e => e.nombre),
                             datasets: [{
-                                label: 'Ingresos (Q)',
+                                label: 'Ingresos ($)',
                                 data: empleadosData.map(e => e.ingresos),
                                 backgroundColor: 'rgba(78, 115, 223, 0.8)',
                                 borderColor: 'rgba(78, 115, 223, 1)',
@@ -551,7 +551,7 @@
                                     bodyColor: '#fff',
                                     callbacks: {
                                         label: function(context) {
-                                            return 'Ingresos: Q' + context.parsed.y.toLocaleString();
+                                            return 'Ingresos: $' + context.parsed.y.toLocaleString();
                                         }
                                     }
                                 }
@@ -567,7 +567,7 @@
                                     ticks: { 
                                         color: '#858796',
                                         callback: function(value) {
-                                            return 'Q' + value.toLocaleString();
+                                            return '$' + value.toLocaleString();
                                         }
                                     }
                                 }
@@ -616,7 +616,7 @@
                                         label: function(context) {
                                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                             const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                            return context.label + ': Q' + context.parsed.toLocaleString() + ' (' + percentage + '%)';
+                                            return context.label + ': $' + context.parsed.toLocaleString() + ' (' + percentage + '%)';
                                         }
                                     }
                                 }
@@ -676,7 +676,7 @@
                                             return [
                                                 'Órdenes: ' + data.ordenes,
                                                 'Eficiencia: ' + data.eficiencia.toFixed(1) + '%',
-                                                'Ingresos: Q' + data.ingresos.toLocaleString()
+                                                'Ingresos: $' + data.ingresos.toLocaleString()
                                             ];
                                         }
                                     }

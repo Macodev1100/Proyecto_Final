@@ -16,6 +16,12 @@
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#crearUsuarioModal">
                         <i class="fas fa-plus"></i> Crear Usuario
                     </button>
+                    <button type="button" class="btn btn-info" onclick="cargarDatosPrueba()">
+                        <i class="fas fa-database"></i> Cargar Datos de Prueba
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="limpiarDatosPrueba()">
+                        <i class="fas fa-trash-alt"></i> Limpiar Todos los Datos
+                    </button>
                     <button type="button" class="btn btn-warning" onclick="inicializarSistema()">
                         <i class="fas fa-cog"></i> Inicializar Sistema
                     </button>
@@ -209,6 +215,56 @@ function eliminarUsuario(id, email) {
 function inicializarSistema() {
     if (confirm('¿Está seguro de inicializar el sistema? Esto creará los roles y el usuario administrador por defecto.')) {
         window.location.href = '@Url.Action("InicializarSistema")';
+    }
+}
+
+function cargarDatosPrueba() {
+    if (confirm('⚠️ ¿Está seguro de cargar datos de prueba?\n\nSe crearán:\n✓ 100 Clientes\n✓ 150 Vehículos\n✓ 50 Repuestos\n✓ 25 Empleados\n✓ 200 Órdenes de Trabajo\n✓ Facturas, Servicios y más\n\nEsto puede tomar unos momentos...')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("CargarDatosPrueba")';
+        
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = '__RequestVerificationToken';
+        input.value = token;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        
+        // Mostrar loading
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+        
+        form.submit();
+    }
+}
+
+function limpiarDatosPrueba() {
+    if (confirm('🗑️ ¡ADVERTENCIA! Esta acción eliminará TODOS los datos:\n\n✗ Todos los Clientes\n✗ Todos los Vehículos\n✗ Todos los Repuestos\n✗ Todos los Empleados\n✗ Todas las Órdenes de Trabajo\n✗ Todas las Facturas\n✗ Todos los Servicios\n✗ Todos los Registros de Tiempo\n✗ Todos los Movimientos de Inventario\n\n⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER ⚠️\n\n¿Está completamente seguro de continuar?')) {
+        if (confirm('⚠️ ÚLTIMA CONFIRMACIÓN ⚠️\n\n¿Realmente desea ELIMINAR TODOS LOS DATOS de la base de datos?\n\nEsta es su última oportunidad para cancelar.')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("LimpiarDatosPrueba")';
+            
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = '__RequestVerificationToken';
+            input.value = token;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            
+            // Mostrar loading
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Limpiando...';
+            
+            form.submit();
+        }
     }
 }
 </script>

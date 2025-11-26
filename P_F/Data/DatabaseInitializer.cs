@@ -104,25 +104,7 @@ namespace P_F.Data
                     Console.WriteLine("Usuario administrador creado exitosamente.");
                     Console.WriteLine($"Email: {adminEmail}");
                     Console.WriteLine("Password: Admin123!");
-
-                    // Crear empleado asociado al usuario
-                    var empleadoAdmin = new Empleado
-                    {
-                        Nombre = "Administrador",
-                        Apellido = "Sistema",
-                        DocumentoIdentidad = "00000000",
-                        Telefono = "555-0000",
-                        Email = adminEmail,
-                        TipoEmpleado = TipoEmpleado.Administrador,
-                        SalarioHora = 0,
-                        PorcentajeComision = 0,
-                        Activo = true,
-                        UserId = adminUser.Id
-                    };
-
-                    context.Empleados.Add(empleadoAdmin);
-                    await context.SaveChangesAsync();
-                    Console.WriteLine("Empleado administrador asociado creado.");
+                    Console.WriteLine("NOTA: El Administrador es solo un usuario del sistema, no un empleado del taller.");
                 }
                 else
                 {

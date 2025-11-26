@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using P_F.Data;
 using P_F.Models.Entities;
+using P_F.Authorization;
 
 namespace P_F.Controllers
 {
+    [Authorize(Policy = Policies.CanManageEmpleados)]
     public class EmpleadosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,7 +27,10 @@ namespace P_F.Controllers
             ViewData["TipoSortParm"] = sortOrder == "Tipo" ? "tipo_desc" : "Tipo";
             ViewData["FechaSortParm"] = sortOrder == "Fecha" ? "fecha_desc" : "Fecha";
 
-            var empleadosQuery = _context.Empleados.AsQueryable();
+            // Filtrar empleados excluyendo el usuario administrador del sistema
+            var empleadosQuery = _context.Empleados
+                .Where(e => e.Email != "admin@tallerpyf.com")
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {

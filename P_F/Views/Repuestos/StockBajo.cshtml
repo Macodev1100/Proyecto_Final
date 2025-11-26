@@ -104,7 +104,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                Q @repuesto.PrecioCosto.ToString("N2")
+                                                $@repuesto.PrecioCosto.ToString("N2")
                                             </td>
                                             <td>
                                                 @(!string.IsNullOrEmpty(repuesto.Proveedor) ? repuesto.Proveedor : "No especificado")
@@ -167,7 +167,7 @@
                                 <h6 class="text-info">
                                     <i class="fas fa-dollar-sign me-2"></i>Valor Inversión
                                 </h6>
-                                <h4 class="text-gray-800">Q @Model.Sum(r => r.PrecioCosto * r.StockActual).ToString("N2")</h4>
+                                <h4 class="text-gray-800">$@Model.Sum(r => r.PrecioCosto * r.StockActual).ToString("N2")</h4>
                             </div>
                         </div>
                     </div>

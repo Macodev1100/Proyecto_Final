@@ -1,4 +1,4 @@
-@model IEnumerable<P_F.Models.Entities.Cliente>
+@model IEnumerable<P_F.Models.DTOs.ClienteListDTO>
 
 @{
     ViewData["Title"] = "Gestión de Clientes";
@@ -103,9 +103,9 @@
                             </td>
                             <td>
                                 <span class="badge bg-info">
-                                    @cliente.Vehiculos.Count() vehículo(s)
+                                    @(cliente.Vehiculos?.Count() ?? 0) vehículo(s)
                                 </span>
-                                @if (cliente.Vehiculos.Any())
+                                @if (cliente.Vehiculos != null && cliente.Vehiculos.Any())
                                 {
                                     <br>
                                     <small class="text-muted">

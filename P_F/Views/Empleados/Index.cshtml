@@ -64,14 +64,14 @@
             {
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead class="table-dark">
+                        <thead class="table-light">
                             <tr>
                                 <th>
                                     <a asp-action="Index" asp-route-sortOrder="@ViewData["NombreSortParm"]" 
                                        asp-route-currentFilter="@ViewData["CurrentFilter"]"
                                        asp-route-tipo="@ViewData["TipoFilter"]"
                                        asp-route-activo="@ViewData["ActivoFilter"]"
-                                       class="text-white text-decoration-none">
+                                       class="text-dark text-decoration-none fw-bold">
                                         Nombre <i class="fas fa-sort"></i>
                                     </a>
                                 </th>
@@ -80,23 +80,23 @@
                                        asp-route-currentFilter="@ViewData["CurrentFilter"]"
                                        asp-route-tipo="@ViewData["TipoFilter"]"
                                        asp-route-activo="@ViewData["ActivoFilter"]"
-                                       class="text-white text-decoration-none">
+                                       class="text-dark text-decoration-none fw-bold">
                                         Tipo <i class="fas fa-sort"></i>
                                     </a>
                                 </th>
-                                <th>Documento</th>
-                                <th>Contacto</th>
+                                <th class="fw-bold">Documento</th>
+                                <th class="fw-bold">Contacto</th>
                                 <th>
                                     <a asp-action="Index" asp-route-sortOrder="@ViewData["FechaSortParm"]" 
                                        asp-route-currentFilter="@ViewData["CurrentFilter"]"
                                        asp-route-tipo="@ViewData["TipoFilter"]"
                                        asp-route-activo="@ViewData["ActivoFilter"]"
-                                       class="text-white text-decoration-none">
+                                       class="text-dark text-decoration-none fw-bold">
                                         Fecha Contratación <i class="fas fa-sort"></i>
                                     </a>
                                 </th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th class="fw-bold">Estado</th>
+                                <th class="fw-bold">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

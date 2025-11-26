@@ -42,7 +42,7 @@
                                 Ventas Este Mes
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="125000">
-                                Q 0
+                                $0
                             </div>
                             <small class="text-success"><i class="fas fa-arrow-up"></i> +12% vs mes anterior</small>
                         </div>
@@ -567,14 +567,14 @@
                 let current = 0;
                 const increment = target / 50;
                 
-                if (counter.textContent.includes('Q')) {
+                if (counter.textContent.includes('$')) {
                     const timer = setInterval(() => {
                         current += increment;
                         if (current >= target) {
                             current = target;
                             clearInterval(timer);
                         }
-                        counter.textContent = 'Q ' + Math.floor(current).toLocaleString();
+                        counter.textContent = '$' + Math.floor(current).toLocaleString();
                     }, 40);
                 } else {
                     const timer = setInterval(() => {

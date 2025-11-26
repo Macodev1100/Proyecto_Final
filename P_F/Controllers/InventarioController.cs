@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using P_F.Models.Entities;
 using P_F.Services;
+using P_F.Authorization;
 
 namespace P_F.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Policies.CanViewInventario)]
     public class InventarioController : Controller
     {
         private readonly IInventarioService _inventarioService;
@@ -41,6 +42,7 @@ namespace P_F.Controllers
         }
 
         // GET: Inventario/Create
+        [Authorize(Policy = Policies.CanManageInventario)]
         public IActionResult Create()
         {
             LoadCategorias();
@@ -48,6 +50,7 @@ namespace P_F.Controllers
         }
 
         // POST: Inventario/Create
+        [Authorize(Policy = Policies.CanManageInventario)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Repuesto repuesto)

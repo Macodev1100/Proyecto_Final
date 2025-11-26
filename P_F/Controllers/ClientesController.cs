@@ -1,27 +1,44 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using P_F.Models.DTOs;
 using P_F.Models.Entities;
 using P_F.Services;
+using P_F.Authorization;
 
 namespace P_F.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Policies.CanViewOrdenes)]
     public class ClientesController : Controller
     {
         private readonly IClienteService _clienteService;
         private readonly IVehiculoService _vehiculoService;
+        private readonly IMapper _mapper;
 
-        public ClientesController(IClienteService clienteService, IVehiculoService vehiculoService)
+        public ClientesController(IClienteService clienteService, IVehiculoService vehiculoService, IMapper mapper)
         {
             _clienteService = clienteService;
             _vehiculoService = vehiculoService;
+            _mapper = mapper;
         }
 
         // GET: Clientes
         public async Task<IActionResult> Index()
         {
             var clientes = await _clienteService.GetAllAsync();
-            return View(clientes);
+            var clientesDto = _mapper.Map<IEnumerable<ClienteListDTO>>(clientes);
+            
+            // Mapear vehículos manualmente para cada cliente
+            foreach (var clienteDto in clientesDto)
+            {
+                var cliente = clientes.FirstOrDefault(c => c.ClienteId == clienteDto.ClienteId);
+                if (cliente?.Vehiculos != null)
+                {
+                    clienteDto.Vehiculos = _mapper.Map<List<VehiculoListDTO>>(cliente.Vehiculos);
+                }
+            }
+            
+            return View(clientesDto);
         }
 
         // GET: Clientes/Details/5
@@ -31,29 +48,41 @@ namespace P_F.Controllers
             if (cliente == null)
                 return NotFound();
 
-            ViewBag.Vehiculos = await _vehiculoService.GetByClienteIdAsync(id);
-            return View(cliente);
+            var clienteDto = _mapper.Map<ClienteDTO>(cliente);
+            
+            // Mapear colecciones manualmente
+            if (cliente.Vehiculos != null)
+            {
+                clienteDto.Vehiculos = _mapper.Map<List<VehiculoListDTO>>(cliente.Vehiculos);
+            }
+            if (cliente.OrdenesTrabajo != null)
+            {
+                clienteDto.OrdenesTrabajo = _mapper.Map<List<OrdenTrabajoListDTO>>(cliente.OrdenesTrabajo);
+            }
+            
+            return View(clienteDto);
         }
 
         // GET: Clientes/Create
         public IActionResult Create()
         {
-            var cliente = new Cliente();
-            return View(cliente);
+            var clienteDto = new ClienteCreateDTO();
+            return View(clienteDto);
         }
 
         // POST: Clientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Cliente cliente)
+        public async Task<IActionResult> Create(ClienteCreateDTO clienteDto)
         {
             if (ModelState.IsValid)
             {
+                var cliente = _mapper.Map<Cliente>(clienteDto);
                 await _clienteService.CreateAsync(cliente);
                 TempData["Success"] = "Cliente creado exitosamente.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(cliente);
+            return View(clienteDto);
         }
 
         // GET: Clientes/Edit/5
@@ -63,24 +92,26 @@ namespace P_F.Controllers
             if (cliente == null)
                 return NotFound();
 
-            return View(cliente);
+            var clienteDto = _mapper.Map<ClienteUpdateDTO>(cliente);
+            return View(clienteDto);
         }
 
         // POST: Clientes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Cliente cliente)
+        public async Task<IActionResult> Edit(int id, ClienteUpdateDTO clienteDto)
         {
-            if (id != cliente.ClienteId)
+            if (id != clienteDto.ClienteId)
                 return NotFound();
 
             if (ModelState.IsValid)
             {
+                var cliente = _mapper.Map<Cliente>(clienteDto);
                 await _clienteService.UpdateAsync(cliente);
                 TempData["Success"] = "Cliente actualizado exitosamente.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(cliente);
+            return View(clienteDto);
         }
 
         // POST: Clientes/Delete/5

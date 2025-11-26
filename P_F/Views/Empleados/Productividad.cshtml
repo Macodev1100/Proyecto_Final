@@ -193,7 +193,7 @@
                                         </div>
                                     </td>
                                     <td class="text-center">@(((double)empleado.HorasTrabajadasTotal).ToString("F1")) hrs</td>
-                                    <td class="text-center">Q @empleado.TotalFacturado.ToString("N0")</td>
+                                    <td class="text-center">$@empleado.TotalFacturado.ToString("N0")</td>
                                     <td class="text-center">
                                         @{
                                             var eficiencia = empleado.OrdenesCompletadas > 0 ? (empleado.OrdenesCompletadas * 20) : 0;

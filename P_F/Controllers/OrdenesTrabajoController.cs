@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using P_F.Models.Entities;
 using P_F.Services;
+using P_F.Authorization;
 
 namespace P_F.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = Policies.CanViewOrdenes)]
     public class OrdenesTrabajoController : Controller
     {
         private readonly IOrdenTrabajoService _ordenTrabajoService;
@@ -43,10 +44,10 @@ namespace P_F.Controllers
                 ordenes = await _ordenTrabajoService.GetAllAsync();
 
             ViewBag.EstadoFiltro = estado;
-            ViewBag.Estados = Enum.GetValues<EstadoOrden>().Select(e => new SelectListItem 
-            { 
-                Value = ((int)e).ToString(), 
-                Text = e.ToString() 
+            ViewBag.Estados = Enum.GetValues<EstadoOrden>().Select(e => new SelectListItem
+            {
+                Value = ((int)e).ToString(),
+                Text = e.ToString()
             });
 
             return View(ordenes);

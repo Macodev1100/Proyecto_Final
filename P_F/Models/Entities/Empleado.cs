@@ -5,7 +5,6 @@ namespace P_F.Models.Entities
 {
     public enum TipoEmpleado
     {
-        Administrador,
         Mecanico,
         Recepcionista,
         Supervisor,

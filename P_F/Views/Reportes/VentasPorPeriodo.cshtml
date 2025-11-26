@@ -163,7 +163,7 @@
                                 Ventas del Período
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="125000">
-                                Q 0
+                                $0
                             </div>
                         </div>
                         <div class="col-auto">
@@ -203,7 +203,7 @@
                                 Promedio por Orden
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800 counter-value" data-target="2604">
-                                Q 0
+                                $0
                             </div>
                         </div>
                         <div class="col-auto">
@@ -331,25 +331,25 @@
                                 <tr>
                                     <td><strong>2024-01-15</strong><br><small class="text-muted">Lunes</small></td>
                                     <td class="text-center"><span class="badge bg-info rounded-pill">3</span></td>
-                                    <td class="text-center">Q 1,850</td>
-                                    <td class="text-center">Q 780</td>
-                                    <td class="text-center"><strong class="text-success">Q 2,630</strong></td>
+                                    <td class="text-center">$1,850</td>
+                                    <td class="text-center">$780</td>
+                                    <td class="text-center"><strong class="text-success">$2,630</strong></td>
                                     <td class="text-center"><span class="badge bg-success">+12%</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>2024-01-16</strong><br><small class="text-muted">Martes</small></td>
                                     <td class="text-center"><span class="badge bg-info rounded-pill">5</span></td>
-                                    <td class="text-center">Q 2,450</td>
-                                    <td class="text-center">Q 1,200</td>
-                                    <td class="text-center"><strong class="text-success">Q 3,650</strong></td>
+                                    <td class="text-center">$2,450</td>
+                                    <td class="text-center">$1,200</td>
+                                    <td class="text-center"><strong class="text-success">$3,650</strong></td>
                                     <td class="text-center"><span class="badge bg-success">+38%</span></td>
                                 </tr>
                                 <tr>
                                     <td><strong>2024-01-17</strong><br><small class="text-muted">Miércoles</small></td>
                                     <td class="text-center"><span class="badge bg-info rounded-pill">2</span></td>
-                                    <td class="text-center">Q 1,200</td>
-                                    <td class="text-center">Q 450</td>
-                                    <td class="text-center"><strong class="text-success">Q 1,650</strong></td>
+                                    <td class="text-center">$1,200</td>
+                                    <td class="text-center">$450</td>
+                                    <td class="text-center"><strong class="text-success">$1,650</strong></td>
                                     <td class="text-center"><span class="badge bg-danger">-55%</span></td>
                                 </tr>
                             </tbody>
@@ -474,14 +474,14 @@
                 let current = 0;
                 const increment = target / 50;
                 
-                if (counter.textContent.includes('Q')) {
+                if (counter.textContent.includes('$')) {
                     const timer = setInterval(() => {
                         current += increment;
                         if (current >= target) {
                             current = target;
                             clearInterval(timer);
                         }
-                        counter.textContent = 'Q ' + Math.floor(current).toLocaleString();
+                        counter.textContent = '$' + Math.floor(current).toLocaleString();
                     }, 40);
                 } else {
                     const timer = setInterval(() => {
@@ -527,7 +527,7 @@
                             bodyColor: '#fff',
                             callbacks: {
                                 label: function(context) {
-                                    return 'Ventas: Q' + context.parsed.y.toLocaleString();
+                                    return 'Ventas: $' + context.parsed.y.toLocaleString();
                                 }
                             }
                         }
@@ -543,7 +543,7 @@
                             ticks: { 
                                 color: '#858796',
                                 callback: function(value) {
-                                    return 'Q' + value.toLocaleString();
+                                    return '$' + value.toLocaleString();
                                 }
                             }
                         }
@@ -626,7 +626,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return context.dataset.label + ': Q' + context.parsed.y.toLocaleString();
+                                    return context.dataset.label + ': $' + context.parsed.y.toLocaleString();
                                 }
                             }
                         }
@@ -642,7 +642,7 @@
                             ticks: { 
                                 color: '#858796',
                                 callback: function(value) {
-                                    return 'Q' + (value/1000) + 'k';
+                                    return '$' + (value/1000) + 'k';
                                 }
                             }
                         }

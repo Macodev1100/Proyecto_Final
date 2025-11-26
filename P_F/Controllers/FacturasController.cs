@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using P_F.Data;
 using P_F.Models.Entities;
 using P_F.Services;
 using P_F.ViewModels;
+using P_F.Authorization;
 
 namespace P_F.Controllers
 {
+    [Authorize(Policy = Policies.CanManageFacturas)]
     public class FacturasController : Controller
     {
         private readonly ApplicationDbContext _context;
