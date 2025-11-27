@@ -1,0 +1,232 @@
+@model MotorTechService.ViewModels.ReporteFacturasViewModel
+
+@{
+    ViewData["Title"] = "Reporte de Facturas";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-chart-line me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="mb-0 text-muted">Resumen detallado de facturas por período</p>
+                </div>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Volver
+                </a>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-filter me-2"></i>Filtros de Reporte
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                    <input type="date" name="fechaInicio" id="fechaInicio" class="form-control" value="@ViewBag.FechaInicio?.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                    <input type="date" name="fechaFin" id="fechaFin" class="form-control" value="@ViewBag.FechaFin?.ToString("yyyy-MM-dd")" />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="estado" class="form-label">Estado</label>
+                                    <select name="estado" id="estado" class="form-control">
+                                        <option value="">Todos</option>
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="Pagada">Pagada</option>
+                                        <option value="Vencida">Vencida</option>
+                                        <option value="Cancelada">Cancelada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search me-1"></i>Generar Reporte
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Resumen de estadísticas -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total Facturado</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        $@((Model?.TotalFacturado ?? 0).ToString("N2"))
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Facturas Pagadas</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @(Model?.TotalFacturasPagadas ?? 0)
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Facturas Pendientes</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @(Model?.TotalFacturasPendientes ?? 0)
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Facturas Vencidas</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        @(Model?.TotalFacturasVencidas ?? 0)
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de facturas -->
+            @if (Model?.Facturas != null && Model.Facturas.Any())
+            {
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-table me-2"></i>Detalle de Facturas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Número</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha Emisión</th>
+                                        <th>Fecha Vencimiento</th>
+                                        <th>Estado</th>
+                                        <th>Subtotal</th>
+                                        <th>Impuestos</th>
+                                        <th>Total</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var factura in Model.Facturas)
+                                    {
+                                        <tr>
+                                            <td>@factura.NumeroFactura</td>
+                                            <td>@factura.Cliente.Nombre @factura.Cliente.Apellido</td>
+                                            <td>@factura.FechaEmision.ToString("dd/MM/yyyy")</td>
+                                            <td>@factura.FechaVencimiento?.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                <span class="badge badge-@GetEstadoBadgeClass(factura.Estado.ToString())">
+                                                    @factura.Estado
+                                                </span>
+                                            </td>
+                                            <td>$@factura.SubTotal.ToString("N2")</td>
+                                            <td>$@factura.Impuestos.ToString("N2")</td>
+                                            <td>$@factura.Total.ToString("N2")</td>
+                                            <td>
+                                                <a asp-controller="Facturas" asp-action="Details" asp-route-id="@factura.FacturaId" 
+                                                   class="btn btn-info btn-sm" title="Ver Detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a asp-controller="Facturas" asp-action="GenerarPDF" asp-route-id="@factura.FacturaId" 
+                                                   class="btn btn-danger btn-sm" title="Descargar PDF">
+                                                    <i class="fas fa-file-pdf"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-inbox fa-3x text-gray-300 mb-3"></i>
+                        <h5>No se encontraron facturas</h5>
+                        <p class="text-muted">No hay facturas que coincidan con los criterios de búsqueda.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetEstadoBadgeClass(string estado)
+    {
+        return estado switch
+        {
+            "Pagada" => "success",
+            "Pendiente" => "warning",
+            "Vencida" => "danger",
+            "Cancelada" => "secondary",
+            _ => "secondary"
+        };
+    }
+}

@@ -1,0 +1,283 @@
+@model IEnumerable<MotorTechService.Models.Entities.Repuesto>
+@{
+    ViewData["Title"] = "Stock Bajo - Repuestos";
+}
+
+@{
+    ViewData["Title"] = "Stock Bajo - Repuestos";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>@ViewData["Title"]
+                    </h1>
+                    <p class="mb-0 text-muted">Repuestos con stock bajo que requieren reabastecimiento</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Volver al Inventario
+                    </a>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>Nuevo Repuesto
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alerta de stock crítico -->
+            <div class="alert alert-warning" role="alert">
+                <h4 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle me-2"></i>¡Atención! Stock Crítico
+                </h4>
+                <p>Los siguientes repuestos tienen stock por debajo del mínimo establecido y requieren reabastecimiento urgente.</p>
+                <hr>
+                <p class="mb-0">
+                    <strong>Total de repuestos con stock bajo: @Model.Count()</strong>
+                </p>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h6 class="m-0 font-weight-bold text-danger">
+                            <i class="fas fa-inventory fa-fw me-2"></i>Repuestos con Stock Bajo
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Nombre</th>
+                                        <th>Categoría</th>
+                                        <th>Ubicación</th>
+                                        <th>Stock Actual</th>
+                                        <th>Stock Mínimo</th>
+                                        <th>Diferencia</th>
+                                        <th>Precio Costo</th>
+                                        <th>Proveedor</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var repuesto in Model.OrderBy(r => r.StockActual))
+                                    {
+                                        <tr class="@(repuesto.StockActual == 0 ? "table-danger" : "table-warning")">
+                                            <td>
+                                                <strong>@repuesto.Codigo</strong>
+                                            </td>
+                                            <td>
+                                                <div>
+                                                    <strong>@repuesto.Nombre</strong>
+                                                    @if (!string.IsNullOrEmpty(repuesto.Descripcion))
+                                                    {
+                                                        <br><small class="text-muted">@repuesto.Descripcion</small>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-info">@repuesto.CategoriaRepuesto?.Nombre</span>
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-map-marker-alt text-muted me-1"></i>
+                                                @(!string.IsNullOrEmpty(repuesto.Ubicacion) ? repuesto.Ubicacion : "No especificada")
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-@(repuesto.StockActual == 0 ? "danger" : "warning") font-weight-bold">
+                                                    @repuesto.StockActual
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-secondary">
+                                                    @repuesto.StockMinimo
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var diferencia = repuesto.StockActual - repuesto.StockMinimo;
+                                                }
+                                                <span class="text-danger font-weight-bold">
+                                                    @diferencia.ToString("+#;-#;0")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                $@repuesto.PrecioCosto.ToString("N2")
+                                            </td>
+                                            <td>
+                                                @(!string.IsNullOrEmpty(repuesto.Proveedor) ? repuesto.Proveedor : "No especificado")
+                                            </td>
+                                            <td>
+                                                <span class="badge badge-@(repuesto.Activo ? "success" : "secondary")">
+                                                    @(repuesto.Activo ? "Activo" : "Inactivo")
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a asp-action="Details" asp-route-id="@repuesto.RepuestoId" 
+                                                       class="btn btn-info btn-sm" title="Ver Detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a asp-action="Edit" asp-route-id="@repuesto.RepuestoId" 
+                                                       class="btn btn-warning btn-sm" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-success btn-sm" 
+                                                            onclick="abrirModalReabastecer(@repuesto.RepuestoId, '@repuesto.Nombre')"
+                                                            title="Reabastecer">
+                                                        <i class="fas fa-plus-circle"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen estadístico -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card border-left-danger">
+                            <div class="card-body">
+                                <h6 class="text-danger">
+                                    <i class="fas fa-times-circle me-2"></i>Sin Stock
+                                </h6>
+                                <h4 class="text-gray-800">@Model.Count(r => r.StockActual == 0)</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-left-warning">
+                            <div class="card-body">
+                                <h6 class="text-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>Stock Crítico
+                                </h6>
+                                <h4 class="text-gray-800">@Model.Count(r => r.StockActual > 0 && r.StockActual <= r.StockMinimo)</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-left-info">
+                            <div class="card-body">
+                                <h6 class="text-info">
+                                    <i class="fas fa-dollar-sign me-2"></i>Valor Inversión
+                                </h6>
+                                <h4 class="text-gray-800">$@Model.Sum(r => r.PrecioCosto * r.StockActual).ToString("N2")</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-left-success">
+                            <div class="card-body">
+                                <h6 class="text-success">
+                                    <i class="fas fa-boxes me-2"></i>Total Items
+                                </h6>
+                                <h4 class="text-gray-800">@Model.Count()</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card shadow">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-check-circle fa-5x text-success mb-4"></i>
+                        <h3 class="text-success">¡Excelente!</h3>
+                        <h5>No hay repuestos con stock bajo</h5>
+                        <p class="text-muted">Todos los repuestos tienen stock suficiente según los mínimos establecidos.</p>
+                        <a asp-action="Index" class="btn btn-primary mt-3">
+                            <i class="fas fa-arrow-left me-2"></i>Volver al Inventario
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal para reabastecer -->
+<div class="modal fade" id="modalReabastecer" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus-circle me-2"></i>Reabastecer Repuesto
+                </h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formReabastecer">
+                    <input type="hidden" id="repuestoId" />
+                    <div class="form-group">
+                        <label>Repuesto:</label>
+                        <p id="nombreRepuesto" class="font-weight-bold text-primary"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidadReabastecer">Cantidad a agregar:</label>
+                        <input type="number" class="form-control" id="cantidadReabastecer" min="1" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="motivoReabastecer">Motivo:</label>
+                        <textarea class="form-control" id="motivoReabastecer" rows="2" placeholder="Ej: Reabastecimiento por stock bajo"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="confirmarReabastecer()">
+                    <i class="fas fa-save me-1"></i>Reabastecer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function abrirModalReabastecer(repuestoId, nombreRepuesto) {
+            document.getElementById('repuestoId').value = repuestoId;
+            document.getElementById('nombreRepuesto').textContent = nombreRepuesto;
+            document.getElementById('cantidadReabastecer').value = '';
+            document.getElementById('motivoReabastecer').value = '';
+            $('#modalReabastecer').modal('show');
+        }
+
+        function confirmarReabastecer() {
+            var repuestoId = document.getElementById('repuestoId').value;
+            var cantidad = document.getElementById('cantidadReabastecer').value;
+            var motivo = document.getElementById('motivoReabastecer').value;
+
+            if (!cantidad || cantidad <= 0) {
+                alert('Por favor ingrese una cantidad válida.');
+                return;
+            }
+
+            // Aquí iría la llamada AJAX para reabastecer
+            // Por ahora solo mostramos un mensaje
+            alert(`Se reabastecerán ${cantidad} unidades del repuesto.`);
+            $('#modalReabastecer').modal('hide');
+        }
+
+        // Inicializar DataTable
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json"
+                },
+                "order": [[4, "asc"]], // Ordenar por stock actual
+                "pageLength": 25
+            });
+        });
+    </script>
+}

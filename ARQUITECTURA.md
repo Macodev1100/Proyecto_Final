@@ -1,6 +1,6 @@
-# Documentación de Arquitectura - Sistema P&F
+# Documentación de Arquitectura - MotorTechService
 
-## 🏗️ Arquitectura del Sistema
+##  Arquitectura del Sistema
 
 ### Arquitectura en Capas
 
@@ -65,7 +65,7 @@ El sistema implementa una **arquitectura en capas (Layered Architecture)** con s
 └────────────────────────────────────────────────────────────────┘
 ```
 
-## 🎯 Patrones de Diseño Implementados
+##  Patrones de Diseño Implementados
 
 ### 1. MVC (Model-View-Controller)
 **Archivo**: Estructura completa del proyecto
@@ -157,7 +157,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 **Archivo**: `Data/ApplicationDbContext.cs`
 
-## 📊 Diagrama de Flujo Principal
+##  Diagrama de Flujo Principal
 
 ```
 Usuario → Controller → Service → Repository → DbContext → SQL Server
@@ -166,7 +166,7 @@ Usuario → Controller → Service → Repository → DbContext → SQL Server
    └──── View ◄──── DTO ◄──── Entity ◄──── Entity ◄──── Tabla
 ```
 
-## 🔄 Flujo de una Operación Típica
+##  Flujo de una Operación Típica
 
 ### Ejemplo: Crear un Cliente
 
@@ -198,10 +198,10 @@ Usuario → Controller → Service → Repository → DbContext → SQL Server
 12. Vista muestra mensaje de éxito
 ```
 
-## 📈 Principios SOLID Demostrados
+##  Principios SOLID Demostrados
 
 ### Single Responsibility (SRP)
-✅ Cada clase tiene una única responsabilidad:
+ Cada clase tiene una única responsabilidad:
 - Controllers: Coordinación
 - Services: Lógica de negocio
 - Repositories: Acceso a datos
@@ -209,63 +209,63 @@ Usuario → Controller → Service → Repository → DbContext → SQL Server
 - DTOs: Transferencia de datos
 
 ### Open/Closed (OCP)
-✅ Extensible sin modificar código existente:
+ Extensible sin modificar código existente:
 - Repositorio genérico `IRepository<T>`
 - Repositorios específicos extienden sin modificar
 - Servicios implementan interfaces
 
 ### Liskov Substitution (LSP)
-✅ Subtipos sustituibles:
+ Subtipos sustituibles:
 - `ClienteRepository : IClienteRepository : IRepository<Cliente>`
 - Cualquier implementación funciona donde se requiere la interfaz
 
 ### Interface Segregation (ISP)
-✅ Interfaces específicas y pequeñas:
+ Interfaces específicas y pequeñas:
 - `IClienteService` solo métodos de clientes
 - No se fuerza a implementar métodos innecesarios
 
 ### Dependency Inversion (DIP)
-✅ Depende de abstracciones:
+ Depende de abstracciones:
 - Controllers → IServices (no implementaciones)
 - Services → IRepositories (no implementaciones)
 - Inyección de dependencias en todos los niveles
 
-## 🎓 Mejoras Arquitectónicas Implementadas
+##  Mejoras Arquitectónicas Implementadas
 
-### ✅ Capa de Repositorios
+###  Capa de Repositorios
 - Repositorio genérico `IRepository<T>`
 - 7 repositorios especializados
 - Métodos con includes y expresiones lambda
 - Separación completa de DbContext
 
-### ✅ DTOs Completos
+###  DTOs Completos
 - 6 conjuntos de DTOs (Cliente, Vehiculo, Orden, Empleado, Factura, Repuesto)
 - Validaciones con Data Annotations
 - Propiedades calculadas
 - Versiones Create, Update, List y completo
 
-### ✅ AutoMapper Configurado
+###  AutoMapper Configurado
 - Perfiles de mapeo centralizados
 - Mapeos bidireccionales
 - Propiedades calculadas automáticas
 - Registrado en DI
 
-### ✅ Servicios Refactorizados
+###  Servicios Refactorizados
 - 9 interfaces de servicios
 - Implementaciones con lógica de negocio
 - Uso de repositorios (no DbContext directo)
 - Métodos especializados de negocio
 
-### ✅ Inyección de Dependencias
+###  Inyección de Dependencias
 - Todos los servicios registrados
 - Todos los repositorios registrados
 - AutoMapper registrado
 - Ciclo de vida Scoped apropiado
 
-## 📁 Estructura de Archivos del Proyecto
+##  Estructura de Archivos del Proyecto
 
 ```
-P_F/
+MotorTechService/
 ├── Controllers/                  # Capa de Presentación
 │   ├── ClientesController.cs
 │   ├── VehiculosController.cs
@@ -349,63 +349,63 @@ P_F/
 └── Program.cs                    # Punto de entrada y configuración
 ```
 
-## 🔍 Ventajas de Esta Arquitectura
+##  Ventajas de Esta Arquitectura
 
 ### 1. Mantenibilidad
-- ✅ Código organizado por responsabilidades
-- ✅ Fácil localizar funcionalidad
-- ✅ Cambios localizados y predecibles
+-  Código organizado por responsabilidades
+-  Fácil localizar funcionalidad
+-  Cambios localizados y predecibles
 
 ### 2. Escalabilidad
-- ✅ Fácil agregar nuevos módulos
-- ✅ Servicios independientes
-- ✅ Posible evolución a microservicios
+-  Fácil agregar nuevos módulos
+-  Servicios independientes
+-  Posible evolución a microservicios
 
 ### 3. Testabilidad
-- ✅ Interfaces permiten mocking
-- ✅ Lógica de negocio aislada
-- ✅ Repositorios test doubles
+-  Interfaces permiten mocking
+-  Lógica de negocio aislada
+-  Repositorios test doubles
 
 ### 4. Reutilización
-- ✅ DTOs reutilizables
-- ✅ Repositorio genérico
-- ✅ Servicios independientes
-- ✅ AutoMapper centralizado
+-  DTOs reutilizables
+-  Repositorio genérico
+-  Servicios independientes
+-  AutoMapper centralizado
 
 ### 5. Seguridad
-- ✅ Identity framework
-- ✅ Autorización por roles
-- ✅ Validaciones en múltiples capas
-- ✅ Protección contra SQL Injection (EF Core)
+-  Identity framework
+-  Autorización por roles
+-  Validaciones en múltiples capas
+-  Protección contra SQL Injection (EF Core)
 
-## 🎯 Calidad del Código
+##  Calidad del Código
 
 ### Métricas de Calidad
 
-- **Separación de Concerns**: ⭐⭐⭐⭐⭐ (Excelente)
-- **Cohesión**: ⭐⭐⭐⭐⭐ (Alta)
-- **Acoplamiento**: ⭐⭐⭐⭐⭐ (Bajo)
-- **Testabilidad**: ⭐⭐⭐⭐⭐ (Excelente)
-- **Reusabilidad**: ⭐⭐⭐⭐⭐ (Alta)
-- **Mantenibilidad**: ⭐⭐⭐⭐⭐ (Excelente)
+- **Separación de Concerns**:  (Excelente)
+- **Cohesión**:  (Alta)
+- **Acoplamiento**:  (Bajo)
+- **Testabilidad**:  (Excelente)
+- **Reusabilidad**:  (Alta)
+- **Mantenibilidad**:  (Excelente)
 
 ### Patrones Implementados: 7/7
-✅ MVC
-✅ Repository Pattern
-✅ Service Layer
-✅ DTO Pattern
-✅ Dependency Injection
-✅ Mapper Pattern
-✅ Unit of Work
+ MVC
+ Repository Pattern
+ Service Layer
+ DTO Pattern
+ Dependency Injection
+ Mapper Pattern
+ Unit of Work
 
 ### Principios SOLID: 5/5
-✅ Single Responsibility
-✅ Open/Closed
-✅ Liskov Substitution
-✅ Interface Segregation
-✅ Dependency Inversion
+ Single Responsibility
+ Open/Closed
+ Liskov Substitution
+ Interface Segregation
+ Dependency Inversion
 
-## 📚 Referencias y Recursos
+##  Referencias y Recursos
 
 ### Patrones de Diseño
 - [Microsoft - Repository Pattern](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design)

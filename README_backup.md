@@ -1,44 +1,44 @@
-# Sistema de Gestión para Taller Mecánico P&F
+# MotorTechService - Sistema de Gestión para Taller Mecánico
 
 ## Descripción General
-Sistema integral de gestión para talleres mecánicos desarrollado en ASP.NET Core 8 MVC con Entity Framework Core y SQL Server. Incluye funcionalidades completas para administrar clientes, vehículos, órdenes de trabajo, inventario, empleados, facturación y reportes.
+MotorTechService es un sistema integral de gestión para talleres mecánicos desarrollado en ASP.NET Core 8 MVC con Entity Framework Core y SQL Server. Incluye funcionalidades completas para administrar clientes, vehículos, órdenes de trabajo, inventario, empleados, facturación y reportes.
 
 ## Características Principales
 
-### 🚗 Gestión de Vehículos y Clientes
+###  Gestión de Vehículos y Clientes
 - Registro completo de clientes con información de contacto
 - Gestión de vehículos asociados a clientes
 - Historial de servicios por vehículo
 - Búsqueda avanzada y filtros
 
-### 📋 Órdenes de Trabajo
+###  Órdenes de Trabajo
 - Creación y seguimiento de órdenes de trabajo
 - Estados: Pendiente, En Proceso, En Espera, Completada, Cancelada
 - Asignación de mecánicos y servicios
 - Cálculo automático de costos
 - Historial completo de cambios
 
-### 📦 Control de Inventario
+###  Control de Inventario
 - Gestión de repuestos y materiales
 - Control de stock con alertas de stock bajo
 - Movimientos de inventario (entradas/salidas)
 - Proveedores y compras
 - Reportes de inventario crítico
 
-### 👨‍🔧 Gestión de Empleados
+###  Gestión de Empleados
 - Registro de empleados con especialidades
 - Seguimiento de productividad
 - Asignación a órdenes de trabajo
 - Reportes de rendimiento
 
-### 💰 Facturación
+###  Facturación
 - Generación automática de facturas
 - Múltiples métodos de pago
 - Descuentos y promociones
 - Reportes de ventas
 - Exportación a PDF
 
-### 📊 Centro de Reportes
+###  Centro de Reportes
 - Dashboard ejecutivo con métricas clave
 - Reportes de ventas por período
 - Productividad de empleados
@@ -47,19 +47,19 @@ Sistema integral de gestión para talleres mecánicos desarrollado en ASP.NET Co
 - Órdenes por estado
 - Exportación a PDF de todos los reportes
 
-### 🔒 Sistema de Autenticación y Autorización
+###  Sistema de Autenticación y Autorización
 - Roles: Administrador, Gerente, Mecánico, Recepcionista
 - Permisos granulares por funcionalidad
 - Gestión de usuarios
 - Inicialización automática del sistema
 
-### 📄 Generación de PDFs
+###  Generación de PDFs
 - Facturas profesionales
 - Órdenes de trabajo
 - Reportes ejecutivos
 - Documentos con formato corporativo
 
-### 🔔 Sistema de Notificaciones
+###  Sistema de Notificaciones
 - Alertas en tiempo real
 - Notificaciones de stock bajo
 - Recordatorios de mantenimiento
@@ -87,7 +87,7 @@ Sistema integral de gestión para talleres mecánicos desarrollado en ASP.NET Co
 ## Estructura del Proyecto
 
 ```
-P_F/
+MotorTechService/
 ├── Controllers/          # Controladores MVC
 ├── Models/              # Modelos de datos
 ├── Services/            # Lógica de negocio
@@ -213,5 +213,5 @@ Para soporte técnico o consultas sobre el sistema, contactar al equipo de desar
 
 ---
 
-**Desarrollado para Taller Mecánico P&F**
+**Desarrollado para MotorTechService**
 *Sistema completo de gestión empresarial*
